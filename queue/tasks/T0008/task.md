@@ -3,15 +3,15 @@
 ```json
 {
   "id": "T0008",
-  "revision": 48,
-  "assignee": null,
+  "revision": 59,
+  "assignee": "claude",
   "parent": "T0003",
   "deps": [
     "T0004",
     "T0006"
   ],
   "round": 2,
-  "status": "批准"
+  "status": "领取"
 }
 ```
 
@@ -35,6 +35,7 @@
 - #35｜approve｜claude｜{"authority": {"basis": "当前对话 2026-09-29：老师“确认结构和分工，授权撤回重新批准”（此前已“采纳全部裁决，登记任务开始修订”并“同意拆分和依赖”）", "by": "用户（老师）"}, "expect": 29, "id": "T0008"}
 - #39｜revoke｜claude｜{"authority": {"basis": "当前对话 2026-09-29：老师同意 Demo 简化方案单独成文，放 truth/demo/，名为“Demo 架构方案”，并注明 object/ 的架构基于该方案实现；老师此前授权“再做一次整组撤回、修订、重新批准，同时新登记 T0009”", "by": "用户（老师）"}, "expect": 30, "expect_seq": 38, "id": "T0003", "tree": true}
 - #48｜approve｜claude｜{"authority": {"basis": "当前对话 2026-09-29：老师回复“T0004 通过，放 truth/demo/，名字简化为‘Demo 架构方案’。注意：object/ 的架构是基于 FESTIVA-Demo 架构方案实现的”（此前已“采纳全部裁决，登记任务开始修订”“确认结构和分工，授权撤回重新批准”）", "by": "用户（老师）"}, "expect": 39, "id": "T0008"}
+- #59｜claim｜claude｜{"expect": 48, "id": "T0008"}
 
 ## 接手说明
 
