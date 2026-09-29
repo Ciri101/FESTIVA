@@ -64,6 +64,32 @@ python3 tool/shell.py config set --file <候选JSON文件> --context <状态版�
 
 同号同业务输入重试返回原操作的路径与结果，允许原状态版本已经过期；`current_seq` 可能已前进。同号不同业务输入拒绝。先看 committed/already_applied，不重造请求；别为了“重试”重复批准、交付或升级。
 
+## 快速收尾
+
+收尾通常是同一执行者连续几笔写入，例如“通过 → 领取 → 释放（留交接说明）→ 提交”。可以压成两步，规则不变：
+
+1. **读一次**：`state get`，按分片读完与上次读过版本相比有变化的源，记下返回的 `seq`（下称 N）与相关任务的 `revision`（`task status`）；交接说明等正文先写成受管路径外的文件。
+2. **连写一次**：每笔写入前现场取新状态版本，并核对 `seq` 恰好是 N 加上自己已写的笔数；不相等说明有其他执行者写过，命令停下，回到第 1 步读变化。任务的 `revision` 就是它最后一次事件的序号，所以同一任务连写时，下一笔的 `--expect` 等于上一笔写入后的序号。最后同批暂存并提交。
+
+```sh
+fresh() {  # 用法：fresh <预期序号>；序号不符即非零退出，不输出版本
+  python3 tool/shell.py state get | python3 -c '
+import json, sys
+d = json.load(sys.stdin); want = int(sys.argv[1]); seq = d["seq"]
+if seq != want: sys.exit(f"序号 {seq}，预期 {want}：有其他写入，先 state get 读变化")
+print(d["context"])' "$1"
+}
+N=<第 1 步的 seq>; A=<执行者>
+C=$(fresh $N) && python3 tool/shell.py task pass <甲> --by 用户 --basis "<验收指令>" --actor $A --request <甲>-pass-<日期> --context "$C" --expect <甲的 revision> \
+&& C=$(fresh $((N+1))) && python3 tool/shell.py task claim <乙> --actor $A --request <乙>-claim-<日期> --context "$C" --expect <乙的 revision> \
+&& C=$(fresh $((N+2))) && python3 tool/shell.py task release <乙> --text "$(cat <交接说明文件>)" --actor $A --request <乙>-release-<日期> --context "$C" --expect $((N+2)) \
+&& git add .shell/queue/ledger.jsonl queue/tasks/<甲> queue/tasks/<乙> && git commit -m "<提交说明>"
+```
+
+- 中途停下时先看输出：已落账的笔不重做；重试沿用原请求号和原输入（见上节）。
+- 只暂存本次写入回执 `stage_paths` 列出的路径；工作树里其他执行者未提交的改动不要顺手带上。机器账里若已有他人未提交的事件，提交检查会连同其任务视图一起核对，先与对方协调由谁提交。
+- 这是减少往返的写法，不是豁免：仍须读过变化、携带 context 与 revision、使用稳定请求号、同批暂存、不绕过钩子。
+
 ## 提交、恢复和保障边界
 
 同批暂存机器账、任务包/取消档案、配置、相关工具和交付工件，提交检查读实际索引。`.shell/local/` 全部排除；状态包不随 Git 分发，新机器从正本重建。运行时不负责自动提交、推送或发起模型会话。
