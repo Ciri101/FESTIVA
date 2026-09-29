@@ -3,8 +3,8 @@
 ```json
 {
   "id": "T0009",
-  "revision": 68,
-  "assignee": null,
+  "revision": 73,
+  "assignee": "claude",
   "parent": "T0003",
   "deps": [
     "T0006",
@@ -12,7 +12,7 @@
     "T0008"
   ],
   "round": 1,
-  "status": "批准"
+  "status": "交付"
 }
 ```
 
@@ -28,6 +28,7 @@
 ## 批准基线与回执
 
 - [approval-001.md](approval-001.md)
+- [receipt-000073.md](receipt-000073.md)
 
 ## 过程记录
 
@@ -35,6 +36,8 @@
 - #49｜approve｜claude｜{"authority": {"basis": "当前对话 2026-09-29：老师回复“T0004 通过，放 truth/demo/，名字简化为‘Demo 架构方案’。注意：object/ 的架构是基于 FESTIVA-Demo 架构方案实现的”（此前已“采纳全部裁决，登记任务开始修订”“确认结构和分工，授权撤回重新批准”）", "by": "用户（老师）"}, "expect": 43, "id": "T0009"}
 - #67｜claim｜claude｜{"expect": 49, "id": "T0009"}
 - #68｜release｜claude｜{"expect": 67, "id": "T0009", "text": "交接说明（2026-09-29，claude，Session 收尾；本任务尚未开始施工，只为留说明而领取后释放）\n\n一、已完成并通过：T0001、T0002（模板接入与 GitHub 发布）；T0004 文件结构（两份文档去掉“草稿”，高保真设计文档移入 truth/ui/）；T0005 goals.md；T0006 产品设计文档（第 1–10 节学生已确认）；T0007 工程架构文档（正式产品级，C4 三层）；T0008 UI 设计文档（truth/ui/，第 1–4 节与附录 A、B 学生已确认）。\n\n二、下一步（按顺序，均已批准、就绪）：\n1. T0010（独立任务）：把 U4 写入产品设计文档 6.1、7.2、11 与工程架构文档 8、15。U4 原文见 T0008 的返工依据。\n2. T0009（本任务）：新建 truth/demo/FESTIVA-Demo架构方案.md，并在 object/AGENTS.md 写明 object/ 的实现以它为依据。主要依据：R6（本地数据 + 用户自带密钥调用云端大模型，密钥存钥匙串，没有密钥时退回演示脚本）；A1、R4（Demo 两条流程，三个角色各一个核心工具）；C1（Demo 中认证为预置状态）；D1、D3（正式架构为服务端调用 LLM 与服务端排序，Demo 改在 App 内）；UI 设计文档附录 A（种子数据，P3 留给视频现场演示申请）。每项简化须对应到工程架构文档中的组件名。\n3. T0003（父任务）：子任务全部通过后收尾——跨文档一致性检查，包括 goals.md“待决定的问题”中已过时的“性别在注册后能否修改”、README.md“两份文档都标为草稿”、reference/README.md“见两份草稿”，以及 T0010 改动后的两份文档；按 F3 用 config set 把产品设计文档、工程架构文档、UI 设计文档、Demo 架构方案加入 truth_whitelist。\n\n三、裁决记录位置：前两轮 38 题在 T0003；第三轮（产品设计文档逐节确认）在 T0006 的返工依据与回执；第四轮（UI 设计文档逐节确认）和追加问题 U4 在 T0008 的返工依据与回执。裁决单页面为老师的私有页面 https://claude.ai/artifact/C4rCZ1czzVZKn9dYUPNyZy，学生经共享作答。\n\n四、仍待定：W1-1 角色头像样式与角色名（UI 设计文档第 5 节）；工程架构文档第 15 节各项（模型供应商、API 技术与部署、AI 编排与 API 是否同平台、对话记录保存、学校域名表、服务等级）。\n\n五、注意：工程架构文档的 8 张 Mermaid 图未实际渲染，需推送后在 GitHub 预览确认；全部提交都在本地 main，未推送（origin 为 Ciri101/FESTIVA，推送须老师明确指示）；README 中的 Python 路径指向学生电脑，本机直接用 python3（3.12）运行队列工具；每次写入前先 state get 并读全文。"}
+- #72｜claim｜claude｜{"expect": 68, "id": "T0009"}
+- #73｜deliver｜claude｜{"artifacts": [{"path": "truth/demo/FESTIVA-Demo架构方案.md", "sha256": "26bf4458ab95d3a0b969300e73f0a1884eea5cb8d6a679607597417b56fe9ed7"}, {"path": "object/AGENTS.md", "sha256": "aa70b369dad7969799de92a3a3ceddcda433fb9848d4e5d31d28d4acc2ac8085"}], "expect": 72, "id": "T0009", "receipt": "# T0009 Demo 架构方案编写：验证回执\n\n执行者：claude；日期：2026-09-29。以下为 Agent 自检，未独立验证，不代替老师验收。\n\n## 交付物\n\n1. 新建 truth/demo/FESTIVA-Demo架构方案.md（版本 0.1，全部章节标“草稿”）：目标与约束、演示流程（视频脚本骨架，9 个场景）、技术选型、总体结构（Mermaid 容器图）、模块与目录（Mermaid 模块图、模块表、边界规则、object/ 目录树）、页面范围、本地数据（模型、种子补全规则、演示时钟与演示位置）、演示账号与预置认证、业务规则的实现（FestivaAPI 接口草图）、AI 角色（编排流程、三个工具、确认卡片、密钥与同意、演示脚本、失败处理）、推荐排序、简化项与正式架构对照（16 项）、开源要求、录制视频准备、明确不做的事、待确认事项、裁决对照。\n2. object/AGENTS.md 新增一条：object/ 的实现以该文档为依据（链接 T0009）。起草时曾写“偏离须先修订该文档”，因为这会成为新的常设规则、超出授权，已删去。\n\n## 本文件提出、随文件验收的设计决定\n\n- 演示时钟默认从 2027-01-20 10:00（温哥华）开始走动，使 UI 附录 A 的活动状态在任何时候 clone 运行都一致；可改为真实时间。\n- 演示位置默认为 Fairview 的固定坐标；按区域中心估算，到 Kitsilano、Mount Pleasant、Kerrisdale、Downtown 分别约 2.8、2.2、3.7、2.2 km。\n- 界面只经 Domain 的 FestivaAPI 访问业务；AI 只拿到只读子集 FestivaReadAPI，类型上不能写入（B1）。业务规则为 Domain 中的纯函数，由 Data 模块的 LocalFestivaAPI 在一次 ModelContext 保存中执行（对应工程 8 的事务要求）。\n- “已满”“已结束”由人数和演示时钟计算，不存储。\n- 种子补全 11 条（附录 A 未给出的值），其中需要老师留意的：全部活动需要审核；缺的已加入人数用虚构“填充用户”补足（P1 全为女性）；主办人不作为自己活动的成员；邮箱用 .example 域名；Ciri 的 Personality 留空给场景 8；Ciri 收藏 P4。\n- Lily 只整理 Personality、Food Allergy、Language、Culture & Religion 四项，不改性别（性别修改会触发 U4）。\n- 对话记录只在内存中；不流式返回；超时 30 秒；每轮最多两次工具调用。\n- 排序：软偏好每项 1 分；同分按距离、再按开始时间；理由标签按“语言 → 距离 → 花费 → 节日 → 标签”取前 2–3 项。\n- 最低 iOS 17；不引入第三方依赖。\n\n## 对产品规则的一项简化（需要老师留意）\n\nS4-4 要求已确认的性格和氛围偏好参与软偏好排序。Demo 不直接解析 Personality 等自由文本，只在 Patti 对话中由模型把它们转成节日、标签等条件后参与排序；Join 首页推荐只用 Language 与距离。已列入第 11、12 节。\n\n## 验收标准逐项\n\n- A1 通过：本文件负责的 A1、A2、B1、B3、B6、C1、D1、D3、R4、R6 都在附录中有对应章节。用脚本逐节提取正文中的裁决编号并与附录核对：第一次发现 4 处不一致（A2 列了 7.2；S4-2、S4-3、S7-2 列了第 2 节；U4 漏了 10.2），已修正；复查结果为 0 处不一致（阅读说明中的编号区间写法不计）。\n- A2 通过：第 12 节的 16 项简化与第 5 节模块表中引用的组件名（API 服务、AI 编排服务、数据库、文件存储、推荐排序、认证与用户、会话入口、上下文装配、工具执行、输出校验、通知、邮件发送服务、Apple 推送通知服务、位置、API 客户端等）用脚本逐个在工程架构文档中检索，全部存在；每项标明为 Demo 专用。\n- A3 通过（自评）：技术选型表、模块表与依赖方向、边界规则、目录树、数据模型表、业务接口草图、三个工具的输入与校验都已写明。实际能否让实现者无需猜测，要到 object/ 实现时才能证明。\n- A4 通过：字段只引用产品 5.1、6.1、6.2 与工程 7；规则只以“按产品第 X 节”引用；正文中的 21 处“产品/工程 X”章节引用用脚本核对，全部存在。\n- A5 通过：第 13 节写明仓库不含任何密钥、密钥只在运行时存入钥匙串、提交前做密钥扫描，并写明没有密钥时直接进入演示脚本模式。\n\n其他检查：\n\n- 相对链接：`python3 <scratchpad>/linkcheck.py truth/demo/FESTIVA-Demo架构方案.md object/AGENTS.md` 退出码 0（分别 6 个、3 个链接）。\n- 第 14 节的 `xcrun simctl status_bar … override --time --batteryState charged --batteryLevel`、`io … recordVideo`、`addmedia` 已与本机 `xcrun simctl help` 的输出核对。\n- `git status`：只改动 truth/demo/（新建）与 object/AGENTS.md，另有队列文件。\n\n## 新增待确认（文档第 16 节）\n\n- 热门标签中的 “Girls only”（图 278）与产品 5.1 中作为限制条件的“仅限女生”冲突；Demo 暂不列为标签。\n- 标签名 “Deep talk”（产品 5.1 示例）与 “Deep talk party”（图 278、UI 附录 A）不一致；种子暂用后者。\n- 另外沿用：模型供应商（决定后才能实现真实适配器）、W1-1 角色头像样式。\n\n## 留给 T0003 一致性检查\n\n- 产品设计文档与工程架构文档头部仍写 Demo 架构方案“待新建”；goals.md 写“完成前以上路径尚不存在”。\n- object/AGENTS.md 首段仍称 truth/ 中为“设计与工程文档草稿”。\n- 上面两项标签命名问题涉及产品设计文档与 UI 设计文档，需在那里统一。\n\n## 未验证\n\n- 两张 Mermaid 图没有实际渲染（本机没有 Mermaid 渲染工具）。已用脚本检查 subgraph/end 配对、引号成对、连线端点和 class 引用都已定义。需推送后在 GitHub 预览中确认。\n- 距离为按区域中心估算，实际种子坐标定下后再核对。\n- 没有独立审阅者核对；老师验收前，以上均为 Agent 自检。\n", "summary": "新建 Demo 架构方案（16 节加裁决对照），object/AGENTS.md 写明以其为依据；Agent 自检 A1–A5 通过，未独立验证；Mermaid 未渲染；新增 2 项待确认，3 处留给 T0003", "verification": "passed"}
 
 ## 接手说明
 
