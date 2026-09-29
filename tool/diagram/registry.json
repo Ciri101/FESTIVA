@@ -13,7 +13,7 @@
     "arch_zone": "truth/architecture",
     "design_doc": "truth/FESTIVA-工程架构文档.md",
     "product_prefix": "",
-    "l2_diagrams": [],
+    "l2_diagrams": ["festiva-c1", "festiva-c2"],
     "node_aliases": {},
     "cross_layer_aliases": [],
     "mechanism_pending_marker": "候首查",

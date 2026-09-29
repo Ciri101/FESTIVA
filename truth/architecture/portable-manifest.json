@@ -1,0 +1,10 @@
+{
+  "festiva-c1/portable/festiva-c1-portable.svg": {
+    "source": "festiva-c1/festiva-c1.svg",
+    "source_hash": "6dfa6bf9167b9a04"
+  },
+  "festiva-c2/portable/festiva-c2-portable.svg": {
+    "source": "festiva-c2/festiva-c2.svg",
+    "source_hash": "ac810056035bec16"
+  }
+}

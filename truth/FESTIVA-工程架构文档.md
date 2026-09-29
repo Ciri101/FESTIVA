@@ -1,8 +1,8 @@
 # FESTIVA 工程架构文档
 
-- 版本：0.5
+- 版本：0.6
 - 日期：2026-09-29
-- 状态：草稿。任务 [T0007](../queue/tasks/T0007/task.md) 已通过验收，各章节尚未逐节确认（F1），见下方“章节状态”
+- 状态：第 2、3 节（C1 系统语境图、C2 容器图）已逐节确认（2026-09-29，见任务 [T0013](../queue/tasks/T0013/task.md)）；其余章节仍为草稿（F1），见下方“章节状态”。任务 [T0007](../queue/tasks/T0007/task.md) 写成草稿并通过验收
 - 依据：经确认的 38 项裁决（任务 [T0003](../queue/tasks/T0003/task.md)）；活动字段与产品规则见[产品设计文档](FESTIVA-产品设计文档.md)；原始图示为 [C4 model.png](../reference/C4%20model.png)
 - Demo 开发版本的简化实现不在本文件，见 [Demo 架构方案](demo/FESTIVA-Demo架构方案.md)
 
@@ -21,8 +21,8 @@
 | 章节 | 状态 |
 | --- | --- |
 | 1 与 C4 原图的关系 | 草稿 |
-| 2 系统上下文 | 草稿 |
-| 3 容器 | 草稿 |
+| 2 系统上下文 | 已确认（2026-09-29，T0013） |
+| 3 容器 | 已确认（2026-09-29，T0013） |
 | 4 组件 | 草稿 |
 | 5 AI 角色编排 | 草稿 |
 | 6 推荐排序 | 草稿 |
@@ -40,7 +40,11 @@
 
 > 状态：草稿
 
-C4 原图画在 UI 设计之前，功能定位还没有收敛（A4 备注）。两者冲突时，以产品设计文档和高保真设计文档为准。本文件按 C4 规范重画三层图（D4），相对原图的改动如下：
+C4 原图画在 UI 设计之前，功能定位还没有收敛（A4 备注）。两者冲突时，以产品设计文档和高保真设计文档为准。本文件按 C4 规范重画各层（D4）：第 2、3 节的 C1、C2 已按《架构设计与制图规范》定稿为正式架构图（任务 [T0013](../queue/tasks/T0013/task.md)）；第 4 节的组件图仍是说明图，C3 在 C2 定稿后逐个容器评估，确有需要才画。
+
+C1、C2 的图源在本文件，渲染产物与设计说明在 [architecture/](architecture/AGENTS.md)，按[《架构设计与制图规范》](architecture/架构设计与制图规范.md)绘制，受制图检查把守；其余章节的图是说明图，没有图名，不受检查。定稿时在任务中作出、没有裁决编号的决定，以任务链接标注。
+
+相对原图的改动如下：
 
 | C4 原图 | 本文件 | 依据 |
 | --- | --- | --- |
@@ -57,91 +61,110 @@ C4 原图画在 UI 设计之前，功能定位还没有收敛（A4 备注）。�
 
 统一命名：
 
-| 名称 | 类型 | 说明 |
-| --- | --- | --- |
-| 国际学生 | Person | 同一个人既可以是参与者，也可以是主办人 |
-| FESTIVA 系统 | Software System | 本项目 |
-| iOS App | Container | 客户端 |
-| API 服务 | Container | 业务规则与数据的唯一入口 |
-| AI 编排服务 | Container | 三个 AI 角色的服务端，保管 LLM 密钥 |
-| 数据库 | Container | PostgreSQL |
-| 文件存储 | Container | 封面图和头像 |
-| 云端大模型服务 | External System | 供应商待定 |
-| Apple 地图服务 | External System | MapKit |
-| 邮件发送服务 | External System | 发送学校邮箱验证码 |
-| Apple 推送通知服务 | External System | APNs |
+| 名称 | 英文名 | 类型 | 说明 |
+| --- | --- | --- | --- |
+| 国际学生 | — | Person | 同一个人既可以是参与者，也可以是主办人 |
+| FESTIVA 系统 | — | Software System | 本项目 |
+| iOS App | iOS app | Container | 客户端 |
+| API 服务 | API service | Container | 业务规则与数据的唯一入口 |
+| AI 编排服务 | AI orchestration service | Container | 三个 AI 角色的服务端，保管 LLM 密钥 |
+| 数据库 | database | Container | PostgreSQL |
+| 文件存储 | file storage | Container | 封面图和头像 |
+| 云端大模型服务 | — | External System | 供应商待定 |
+| Apple 地图服务 | — | External System | MapKit |
+| 邮件发送服务 | — | External System | 发送学校邮箱验证码 |
+| Apple 推送通知服务 | — | External System | APNs |
+
+英文名只给容器这类自造名，与中文名直译成对，写在图上节点末行的方括号里（《架构设计与制图规范》第 6 节）；人、本系统与外部系统沿用各自的通行名称，图上写类型标签（任务 [T0013](../queue/tasks/T0013/task.md)）。
 
 ## 2. 系统上下文
 
-> 状态：草稿
+> 状态：已确认（2026-09-29，任务 [T0013](../queue/tasks/T0013/task.md)）
 
 ```mermaid
-flowchart TB
-  student["国际学生<br/>[Person]<br/>发现、创建、参加节日聚会"]
-  festiva["FESTIVA 系统<br/>[Software System]<br/>活动、申请、推荐与三个 AI 角色"]
-  llm["云端大模型服务<br/>[External System]<br/>对话与结构化输出"]
-  maps["Apple 地图服务<br/>[External System]<br/>地图显示、地址转坐标、打开地图 App"]
-  mail["邮件发送服务<br/>[External System]<br/>学校邮箱验证码"]
-  apns["Apple 推送通知服务<br/>[External System]<br/>申请与活动通知"]
-  student -->|"使用 iOS App"| festiva
-  festiva -->|"对话与工具调用，HTTPS"| llm
-  festiva -->|"显示地图、地址转坐标"| maps
-  festiva -->|"发送验证码"| mail
-  festiva -.->|"推送通知"| apns
-  apns -.->|"通知送达"| student
-  classDef person fill:#08427b,color:#ffffff,stroke:#052e56
-  classDef system fill:#1168bd,color:#ffffff,stroke:#0b4884
-  classDef external fill:#999999,color:#ffffff,stroke:#6b6b6b
-  class student person
-  class festiva system
-  class llm,maps,mail,apns external
+%% name: festiva-c1
+%% home: festiva-c1
+flowchart LR
+  student["国际学生<br/>发现、创建、参加节日聚会<br/>[Person]"]
+  festiva["FESTIVA 系统<br/>活动、申请、推荐与 AI 角色<br/>[Software System]"]
+  llm["云端大模型服务<br/>对话与结构化输出<br/>[External System · 供应商待定]"]
+  maps["Apple 地图服务<br/>地图显示与地址转坐标<br/>[External System · MapKit]"]
+  mail["邮件发送服务<br/>发送学校邮箱验证码<br/>[External System]"]
+  apns["Apple 推送通知服务<br/>把通知送达设备<br/>[External System · APNs]"]
+  student -->|"使用"| festiva
+  festiva -->|"调用模型"| llm
+  festiva -->|"地图与坐标"| maps
+  festiva -->|"发验证码"| mail
+  festiva -->|"推送通知"| apns
+  apns -.->|"送达通知"| festiva
+  mail -.->|"验证码邮件"| student
+  classDef shell fill:#deebf7,stroke:#5b81a8
+  classDef ext fill:#f2f2f2,stroke:#8a8a8a
+  class festiva shell
+  class student,llm,maps,mail,apns ext
 ```
 
-图例：深蓝为人，蓝色为本系统，灰色为外部系统；实线为同步请求，虚线为异步通知。
+图例：浅蓝为本系统（FESTIVA 一族），灰色为外部的人与外部系统；实线为发起调用，虚线为投递。线型与配色的定义见[《架构设计与制图规范》](architecture/架构设计与制图规范.md)第 5 节；渲染图、设计说明与评审回执见 [architecture/festiva-c1/](architecture/festiva-c1/festiva-c1.md)。
 
 - 国际学生只通过 iOS App 使用 FESTIVA。
 - LLM 由 FESTIVA 的服务端调用，App 不直接连 LLM（D1）。
 - 地图只用于显示、地址转坐标和跳转到地图 App；FESTIVA 不做导航（D2 备注、R1）。
+- 推送送到用户设备上的 App，验证码邮件送到学生自己的学校邮箱，所以两条投递线的终点不同（任务 [T0013](../queue/tasks/T0013/task.md)）。
+
+C1 边表（边号供第 3 节容器图回指）：
+
+| 边号 | 起点 → 终点：标签 | 完整语义与依据 |
+| --- | --- | --- |
+| 1 | 国际学生 → FESTIVA 系统：使用 | 接口：iOS App 的 Join、Create、Me 三个板块，以及三个 AI 角色的对话｜归属：FESTIVA 系统｜耦合：无（非程序调用）。依据：D4；产品设计文档第 1、2 节 |
+| 2 | FESTIVA 系统 → 云端大模型服务：调用模型 | 接口：对话补全（角色提示词、对话消息、工具定义）→ 回复文本与工具调用｜归属：FESTIVA 系统（接口按 FESTIVA 的需要定义，每家供应商一个适配器实现）｜同步｜耦合：运行时调用。依据：D1（只由服务端调用，App 不持有密钥）、R4；供应商须支持工具调用与结构化输出（第 15 节） |
+| 3 | FESTIVA 系统 → Apple 地图服务：地图与坐标 | 接口：地图显示（区域或坐标）；地址转坐标（地址 → 坐标）；在地图中打开（坐标 → 系统地图 App）｜归属：Apple（平台框架 MapKit，由 App 直接使用）｜同步｜耦合：源码依赖。不接路线服务，距离由 FESTIVA 按坐标计算。依据：D2、R1；第 11 节 |
+| 4 | FESTIVA 系统 → 邮件发送服务：发验证码 | 接口：发送验证码邮件（学校邮箱、验证码）→ 受理结果｜归属：FESTIVA 系统（接口由 FESTIVA 定义，邮件服务商的适配器实现；服务商未定）｜同步（受理即返回，投递见边 7）｜耦合：运行时调用。依据：C1、S6-1；D5 与 R6 备注；第 10 节 |
+| 5 | FESTIVA 系统 → Apple 推送通知服务：推送通知 | 接口：发送推送（设备令牌、通知载荷）→ 受理结果；注册设备（App 向 APNs 取得设备令牌）｜归属：发送推送归 FESTIVA 系统（由 APNs 适配器实现）；注册设备为 Apple 平台接口｜异步（通知记录与业务状态在同一事务中写入，之后再发推送；推送失败不影响业务状态）｜耦合：发送推送为运行时调用；注册设备经 iOS 系统框架，为源码依赖。依据：D5 与 R6 备注；第 7 节 DEVICE_TOKEN、第 9 节；任务 [T0013](../queue/tasks/T0013/task.md)（注册设备并入本边） |
+| 6 | Apple 推送通知服务 ⇢ FESTIVA 系统：送达通知 | 供给：通知载荷，投递到用户设备上的 iOS App｜触发：FESTIVA 发送推送之后。通知事件见第 9 节。依据：任务 [T0013](../queue/tasks/T0013/task.md)（推送送到 App） |
+| 7 | 邮件发送服务 ⇢ 国际学生：验证码邮件 | 供给：含验证码的邮件，投递到学生的学校邮箱｜触发：学生在注册或登录时请求验证码之后。依据：C1、S6-1；任务 [T0013](../queue/tasks/T0013/task.md)（邮件送到人） |
 
 ## 3. 容器
 
-> 状态：草稿
+> 状态：已确认（2026-09-29，任务 [T0013](../queue/tasks/T0013/task.md)）
 
 ```mermaid
+%% name: festiva-c2
+%% home: festiva-c2
 flowchart TB
   student["国际学生<br/>[Person]"]
   subgraph festiva["FESTIVA 系统"]
-    app["iOS App<br/>[Container: Swift / SwiftUI]<br/>Join、Create、Me 三个板块；确认卡片；地图显示；定位"]
-    api["API 服务<br/>[Container: 技术待验证]<br/>认证、活动、申请与名额、推荐排序、通知"]
-    ai["AI 编排服务<br/>[Container: 服务端函数]<br/>Patti、Conor、Lily；保管 LLM 密钥"]
-    db[("数据库<br/>[Container: PostgreSQL]<br/>用户、资料、活动、申请、收藏、通知")]
-    files[("文件存储<br/>[Container: 对象存储]<br/>封面图、头像")]
+    app["iOS App<br/>三个板块、确认卡片<br/>地图与定位<br/>[iOS app · Swift / SwiftUI]"]
+    ai["AI 编排服务<br/>三个 AI 角色的对话与工具<br/>保管模型密钥<br/>[AI orchestration service · 服务端函数]"]
+    api["API 服务<br/>业务规则与推荐排序<br/>数据的唯一入口<br/>[API service · 技术待定]"]
+    db["数据库<br/>全部业务数据<br/>[database · PostgreSQL]"]
+    files["文件存储<br/>封面图与头像<br/>[file storage · 对象存储]"]
   end
-  llm["云端大模型服务<br/>[External System]"]
-  maps["Apple 地图服务<br/>[External System]"]
+  llm["云端大模型服务<br/>[External System · 供应商待定]"]
+  maps["Apple 地图服务<br/>[External System · MapKit]"]
   mail["邮件发送服务<br/>[External System]"]
-  apns["Apple 推送通知服务<br/>[External System]"]
+  apns["Apple 推送通知服务<br/>[External System · APNs]"]
   student -->|"使用"| app
-  app -->|"业务请求，JSON / HTTPS"| api
-  app -->|"对话，流式 HTTPS"| ai
-  app -->|"上传图片，签名地址"| files
-  app -->|"地图显示、地址转坐标"| maps
-  ai -->|"对话与工具调用"| llm
-  ai -->|"执行工具：查询与生成草稿"| api
+  app -->|"业务请求"| api
+  app -->|"角色对话"| ai
+  app -->|"存取图片"| files
+  app -->|"地图与坐标"| maps
+  app -->|"注册设备"| apns
+  ai -.->|"只读查询"| api
+  ai -->|"调用模型"| llm
   api -->|"读写"| db
-  api -->|"签发上传地址、读取"| files
-  api -->|"发送验证码"| mail
-  api -.->|"推送"| apns
-  apns -.->|"通知"| app
-  classDef person fill:#08427b,color:#ffffff,stroke:#052e56
-  classDef container fill:#438dd5,color:#ffffff,stroke:#2e6295
-  classDef external fill:#999999,color:#ffffff,stroke:#6b6b6b
-  class student person
-  class app,api,ai,db,files container
-  class llm,maps,mail,apns external
+  api -->|"签发地址"| files
+  api -->|"发验证码"| mail
+  api -->|"发送推送"| apns
+  apns -.->|"送达通知"| app
+  mail -.->|"验证码邮件"| student
+  classDef shell fill:#deebf7,stroke:#5b81a8
+  classDef ext fill:#f2f2f2,stroke:#8a8a8a
+  class app,ai,api,db,files shell
+  class student,llm,maps,mail,apns ext
+  style festiva fill:none,stroke:#4a90e2,stroke-dasharray:6 4
 ```
 
-图例：深蓝为人，浅蓝为本系统的容器，圆柱为数据存储，灰色为外部系统；实线为同步请求，虚线为异步通知。
+图例：浅蓝为本系统的容器（FESTIVA 一族），蓝色虚线框为系统边界，灰色为外部的人与外部系统；实线为发起调用或写入，虚线为只读或投递。数据库与文件存储也是容器，画成方框。线型与配色的定义见[《架构设计与制图规范》](architecture/架构设计与制图规范.md)第 5 节；渲染图、设计说明（含容器的“类”）与评审回执见 [architecture/festiva-c2/](architecture/festiva-c2/festiva-c2.md)。
 
 | 容器 | 职责 | 不负责 |
 | --- | --- | --- |
@@ -151,9 +174,37 @@ flowchart TB
 | 数据库 | 持久化全部业务数据 | — |
 | 文件存储 | 封面图与头像 | — |
 
-- 所有写操作都由 App 在用户确认后调用 API 服务完成；AI 编排服务只能查询和生成草稿（B1、B3、B6）。
-- API 服务的技术选型沿用 C4 原图的“待验证”；托管后端服务是候选之一（R5 评估）。【待确认】见第 15 节。
+- 所有写操作都由 App 在用户确认后调用 API 服务完成；AI 编排服务只能查询和生成草稿（B1、B3、B6），所以它到 API 服务的边画成虚线。
+- 只有 API 服务读写数据库；AI 编排服务与 App 都不直接访问数据库，没有两个容器共用数据库表。
+- 推荐排序是 API 服务内的组件，不单独成为容器：排序的硬条件与申请、审批时执行的是同一组业务规则，计算距离又要用精确坐标，拆开会让规则写两份，或让两个容器共用数据库表。排序改用学习模型、需要独立算力或发布节奏，或者做“推荐反馈”（第 14 节）时，再评估拆出（任务 [T0013](../queue/tasks/T0013/task.md)）。
+- API 服务的技术选型沿用 C4 原图的“待验证”，图上标“技术待定”；托管后端服务是候选之一（R5 评估）。【待确认】见第 15 节。
 - 【待确认】AI 编排服务与 API 服务是否部署在同一平台，取决于 API 技术选型。
+
+C2 边表（外沿边写明所锚的 C1 边）：
+
+| 边号 | 起点 → 终点：标签 | 完整语义与依据 |
+| --- | --- | --- |
+| 1 | 国际学生 → iOS App：使用 | 接口：Join、Create、Me 三个板块与三个角色的对话界面｜归属：iOS App｜耦合：无（非程序调用）。C1 边 1。依据：D4 |
+| 2 | iOS App → API 服务：业务请求 | 接口：业务接口，包括认证、活动、申请与名额、推荐与搜索、资料、收藏、通知、AI 同意记录；JSON / HTTPS，携带用户令牌｜归属：API 服务｜同步｜耦合：运行时调用。所有写入都经这条边，在用户确认后发出。依据：B1、B3、B6、D3；第 5.3、6 节 |
+| 3 | iOS App → AI 编排服务：角色对话 | 接口：对话（角色、消息，携带用户令牌）→ 流式回复与确认卡片｜归属：AI 编排服务｜同步（流式返回）｜耦合：运行时调用。依据：B1、E4、R4；第 5.1 节 |
+| 4 | iOS App → 文件存储：存取图片 | 接口：按 API 服务签发的地址上传封面图与头像；按图片地址读取｜归属：文件存储（对象存储的上传与读取接口）｜同步｜耦合：运行时调用。依据：S5-1；D5 与 R6 备注 |
+| 5 | iOS App → Apple 地图服务：地图与坐标 | 接口：地图显示；创建活动时地址转坐标；在地图中打开｜归属：Apple（平台框架 MapKit）｜同步｜耦合：源码依赖。C1 边 3。依据：D2、R1；第 11 节 |
+| 6 | iOS App → Apple 推送通知服务：注册设备 | 接口：注册远程通知 → 设备令牌，再经边 2 登记到 API 服务｜归属：Apple 平台接口｜异步（系统回调返回设备令牌）｜耦合：源码依赖（iOS 系统框架）。C1 边 5。依据：第 7 节 DEVICE_TOKEN；任务 [T0013](../queue/tasks/T0013/task.md) |
+| 7 | AI 编排服务 ⇢ API 服务：只读查询 | 供给：用户已确认的资料字段、用户创建或参加的活动、推荐排序结果、节日与标签等固定列表、AI 同意状态；携带用户令牌，按该用户的权限过滤；生成草稿不落库｜触发：每轮对话装配上下文时，以及角色调用工具时。AI 编排服务没有写入接口，写入只经边 2。依据：B1、B2、B3、B6、C9、R4；第 5 节 |
+| 8 | AI 编排服务 → 云端大模型服务：调用模型 | 接口：对话补全（角色提示词、上下文、工具定义）→ 回复与工具调用｜归属：AI 编排服务（接口由它定义，每家供应商一个适配器实现）｜同步｜耦合：运行时调用。大模型密钥只保存在 AI 编排服务。C1 边 2。依据：D1、R4；第 5、12 节 |
+| 9 | API 服务 → 数据库：读写 | 接口：业务数据的读写与事务，名额检查与状态写入在同一事务中完成｜归属：数据库（PostgreSQL）｜同步｜耦合：源码依赖（数据库驱动与表结构）。只有 API 服务读写数据库。依据：C4、S7-1、U4；第 7、8 节 |
+| 10 | API 服务 → 文件存储：签发地址 | 接口：签发上传地址（对象键、有效期）→ 签名地址；读取与校验已上传的图片｜归属：文件存储｜同步｜耦合：运行时调用。依据：S5-1；D5 与 R6 备注 |
+| 11 | API 服务 → 邮件发送服务：发验证码 | 接口：发送验证码邮件（学校邮箱、验证码）→ 受理结果｜归属：API 服务（接口由它定义，邮件服务商的适配器实现）｜同步（受理即返回）｜耦合：运行时调用。C1 边 4。依据：C1、S6-1；第 10 节 |
+| 12 | API 服务 → Apple 推送通知服务：发送推送 | 接口：发送推送（设备令牌、通知载荷）→ 受理结果｜归属：API 服务（接口由它定义，APNs 适配器实现）｜异步（通知记录与业务状态在同一事务中写入，之后再发推送；推送失败不影响业务状态）｜耦合：运行时调用。C1 边 5。依据：D5 与 R6 备注；第 9 节 |
+| 13 | Apple 推送通知服务 ⇢ iOS App：送达通知 | 供给：通知载荷，包括新申请、审批结果、活动取消或修改、自动撤回或退出｜触发：API 服务发送推送之后。App 内的铃铛与申请通知页仍经边 2 读取通知记录，推送只是提醒。C1 边 6。依据：第 9 节；任务 [T0013](../queue/tasks/T0013/task.md) |
+| 14 | 邮件发送服务 ⇢ 国际学生：验证码邮件 | 供给：含验证码的邮件，投递到学生的学校邮箱｜触发：学生在注册或登录时请求验证码之后。C1 边 7。依据：C1、S6-1；任务 [T0013](../queue/tasks/T0013/task.md) |
+
+容器指针表（有 C3 组件图的容器，逐行列出其设计说明与图源）：
+
+| 容器 | 详设文档 | 图源 |
+| --- | --- | --- |
+
+暂时为空：C3 在 C2 定稿后逐个容器评估，经决定才画（[图纸区规则](architecture/AGENTS.md)关键规则 6）。第 4 节的三个组件图是说明图，不列入本表。
 
 ## 4. 组件
 
@@ -432,38 +483,41 @@ stateDiagram-v2
 | --- | --- |
 | A4 | 1、14 |
 | B1 | 1、3、4.1、5.3 |
-| B2 | 5.3 |
+| B2 | 3、5.3 |
 | B3 | 3、5.2、5.3 |
 | B4 | 5.3、6 |
 | B5 | 6 |
 | B6 | 3、5.2、5.3 |
 | B7 | 14 |
-| C1 | 10 |
+| C1 | 2、3、10 |
 | C3 | 6、8 |
-| C4 | 8、9 |
+| C4 | 3、8、9 |
 | C5 | 7、11、12 |
 | C8 | 11 |
-| C9 | 5.3、7、12 |
-| D1 | 1、2、12 |
-| D2 | 1、2、11 |
-| D3 | 1、4.1、6 |
-| D4 | 1，以及第 2–4 节的图 |
+| C9 | 3、5.3、7、12 |
+| D1 | 1、2、3、12 |
+| D2 | 1、2、3、11 |
+| D3 | 1、3、4.1、6 |
+| D4 | 1、2、3（C1、C2 正式架构图），以及第 4 节的说明图 |
 | D5 | 1、2、3 |
-| R1 | 1、2、11 |
+| E4 | 3 |
+| R1 | 1、2、3、11 |
 | R3 | 10 |
-| R4 | 5.2 |
+| R4 | 2、3、5.2 |
 | R5 | 3、15（作为 API 技术候选；Demo 部分已被 R6 取代） |
-| R6 | 阅读说明，本文件只写正式架构 |
+| R6 | 阅读说明（本文件只写正式架构）；2、3（按产品级补全外部系统） |
 | S3-1 | 13 |
 | S4-1、S4-2、S4-3、S4-4 | 6 |
+| S5-1 | 3 |
 | S5-2、S5-3 | 7 |
 | S5-7、S5-8 | 11 |
-| S6-1 | 10 |
-| S7-1、S7-2 | 8 |
+| S6-1 | 2、3、10 |
+| S7-1 | 3、8 |
+| S7-2 | 8 |
 | S9-3 | 8、9 |
 | S9-4 | 7 |
 | U1 | 10 |
 | U2 | 6 |
-| U4 | 8、9、10 |
+| U4 | 3、8、9、10 |
 
-其余裁决（A1–A3、B 组其他、C2、C6、C7、E 组、F 组等）归产品设计文档、高保真设计文档或定稿流程，本文件通过引用使用。
+其余裁决（A1–A3、B 组其他、C2、C6、C7、E 组其他、F 组等）归产品设计文档、高保真设计文档或定稿流程，本文件通过引用使用。
