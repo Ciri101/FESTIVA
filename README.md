@@ -11,7 +11,7 @@ FESTIVA 是面向国际学生的 iOS 节日聚会项目，目标是帮助用户�
 - [Demo 架构方案](truth/demo/FESTIVA-Demo架构方案.md)：Demo 开发版本如何简化实现，`object/` 的实现依据。
 - [参考图](reference/)：C4 图与 `high-fi/` 高保真图片。
 
-两份文档都标为草稿。用户确认前，其中的建议和待确认事项不是已批准的产品或技术决定。
+各文档在头部和每节开头标注状态：标为“已确认”的章节经过逐节确认；标为“草稿”的章节和列出的待确认事项，在用户确认前都不是已批准的产品或技术决定。
 
 ## 文件夹用途
 
@@ -27,10 +27,10 @@ FESTIVA 是面向国际学生的 iOS 节日聚会项目，目标是帮助用户�
 
 ## 项目如何协作
 
-用户直接描述要做的事，Agent 负责整理方案、执行和记录。任务队列是本地项目管理工具，不是 FESTIVA App 的运行部分。队列使用 Python 3.10+ 和 Git；此机器的系统 `python3` 是 3.9。当前可用的 Python 3.12 位于 `/Users/shixinyue/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3`。例如在项目根目录运行：
+用户直接描述要做的事，Agent 负责整理方案、执行和记录。任务队列是本地项目管理工具，不是 FESTIVA App 的运行部分。队列需要 Python 3.10+ 和 Git；系统 `python3` 低于 3.10 时，用任意 3.10+ 的解释器运行。例如在项目根目录运行：
 
 ```sh
-/Users/shixinyue/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 tool/shell.py doctor
+python3 tool/shell.py doctor
 ```
 
 详细命令见[队列用法](tool/queue-usage.md)。
