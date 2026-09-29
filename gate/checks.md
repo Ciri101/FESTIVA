@@ -30,6 +30,6 @@
 - 方法：`node --experimental-strip-types --disable-warning=ExperimentalWarning tool/diagram/check.mts`，提交前可加 `--staged`。本机装了钩子（`sh tool/diagram/install-hook.sh`）后，暂存改动触及 `truth/` 或 `tool/diagram/` 的提交会自动对暂存内容运行。修改 `tool/diagram/` 的代码后，另运行 `tool/diagram/render-diagrams-accept.mts`。
 - 通过条件：检查退出码 0，(e)(w)(x) 无红；夹具 FAIL 为 0，并且在 `settings.l2_diagrams` 声明 C1、C2 之后 SKIP 也为 0。改图后另须目检 SVG 可读。
 - 限制：只证明图与边表相符、跨层锚点可解析、产物不过期，不证明设计正确；设计对错按《架构设计与制图规范》第 9 节评审清单逐条回执。钩子可被刻意绕过，不是安全边界。
-- 来源：2026-09-29，任务 T0012 克隆 envshell 制图机制；老师选择接入提交钩子。
+- 来源：2026-09-29，任务 T0012 克隆 envshell 制图机制；决定接入提交钩子。
 
 执行输出与失败记录归对应任务，本清单不保存“上次通过”的状态。
