@@ -3,12 +3,12 @@
 ```json
 {
   "id": "T0004",
-  "revision": 31,
-  "assignee": null,
+  "revision": 37,
+  "assignee": "claude",
   "parent": "T0003",
   "deps": [],
   "round": 2,
-  "status": "批准"
+  "status": "交付"
 }
 ```
 
@@ -28,6 +28,7 @@
 - [approval-001.md](approval-001.md)
 - [approval-002.md](approval-002.md)
 - [receipt-000022.md](receipt-000022.md)
+- [receipt-000037.md](receipt-000037.md)
 
 ## 过程记录
 
@@ -38,6 +39,8 @@
 - #23｜revoke｜claude｜{"authority": {"basis": "当前对话 2026-09-29：老师“确认结构和分工，授权撤回重新批准”——文档结构调整为产品设计文档与工程架构文档两份核心文档，高保真设计文档移入 truth/ui/，新增 UI 设计文档修订子任务", "by": "用户（老师）"}, "expect": 16, "expect_seq": 22, "id": "T0003", "tree": true}
 - #25｜revise｜claude｜{"basis": "当前对话 2026-09-29：老师“确认结构和分工，授权撤回重新批准”——核心文档为产品设计与工程架构，高保真设计文档移入 truth/ui/", "deps": [], "expect": 23, "id": "T0004", "parent": "T0003", "proposal": {"criteria": "| 编号 | 可观察的结果 | 验证方法 | 通过条件 |\n|---|---|---|---|\n| A1 | 文件位于最终位置，正文未变 | 与改名前版本（提交 425eede）做 `git diff -M` | Git 识别为改名或移动；除一级标题、状态行和相对链接路径外正文无变化 |\n| A2 | 链接可用 | 本地相对链接检查脚本 | README、goals.md、reference/README.md 与两份文档中无断链 |\n| A3 | 无残留旧路径 | `git grep` 旧文件名与旧位置 | 只出现在已封存任务卷、机器账和本任务自己的记录中 |\n\n验收安排：Agent 自检后交付；老师验收。", "origin": "依据父任务 T0003 记录的裁决 F2（文件名去掉“草稿”，状态写在文档头部），以及老师 2026-09-29 的文档结构调整：高保真设计文档属于 UI 设计，移入老师新建的 truth/ui/。先把文件放到最终位置，后续子任务才能在最终路径上修订，避免重复改动引用。\n\n本任务此前已按原范围完成改名并交付（回执 receipt-000022），随父任务整组撤回登记；已提交的改名保留，本次在其基础上补做移动。", "plan": "1. 保留已提交的改名。\n2. 用 git mv 把高保真设计文档移入 truth/ui/，修正文档内部相对链接。\n3. 更新三处入口链接。\n4. 运行检查并重新交付。", "scope": "- 要交付：两份文档使用不带“草稿”的文件名，一级标题去掉“（草稿）”，头部状态行写明“草稿”（已完成，保留）；把 `truth/FESTIVA-高保真设计文档.md` 移到 `truth/ui/FESTIVA-高保真设计文档.md`，并修正该文档内部指向 reference/ 的相对链接；更新 README.md、truth/goals.md、reference/README.md 中指向两份文档的链接。\n- 不包含：正文内容修订（归其他子任务）；新建产品设计文档（归产品设计文档编写任务）；已封存任务卷和机器账中的历史路径。\n- 允许修改的位置：truth/FESTIVA-工程架构文档.md、truth/FESTIVA-高保真设计文档.md 及其移入 truth/ui/ 后的新路径、README.md、truth/goals.md、reference/README.md。", "title": "文件结构调整与链接更新"}}
 - #31｜approve｜claude｜{"authority": {"basis": "当前对话 2026-09-29：老师“确认结构和分工，授权撤回重新批准”（此前已“采纳全部裁决，登记任务开始修订”并“同意拆分和依赖”）", "by": "用户（老师）"}, "expect": 25, "id": "T0004"}
+- #36｜claim｜claude｜{"expect": 31, "id": "T0004"}
+- #37｜deliver｜claude｜{"artifacts": [{"path": "truth/ui/FESTIVA-高保真设计文档.md", "sha256": "77459664c393304afe750aa5617e85bd8704d4d198a756fc7f419872f7e2f47c"}, {"path": "truth/FESTIVA-工程架构文档.md", "sha256": "9232651b504e632c8cf5a9bc147af0e1823793f6bfe9e7875f0f528548b55fff"}, {"path": "README.md", "sha256": "52af7d3a2a5bb925042ef7be68c32b13f73af905e06f1ac5a6d36553e5fdcfff"}, {"path": "truth/goals.md", "sha256": "07379777cfe9e4dd3a7bac5923fab47fa5c1a6c4f48fe6dc195ebf46186e4efd"}, {"path": "reference/README.md", "sha256": "6e7112a32ef2ee30268f56a551682a81861ae95bb0acfa2aae34ea1cebc2eb83"}], "expect": 36, "id": "T0004", "receipt": "# T0004 文件结构调整与链接更新：验证回执（重新交付）\n\n执行者：claude；日期：2026-09-29。以下为 Agent 自检，未独立验证，不代替老师验收。上一轮回执（receipt-000022）只覆盖改名，已随整组撤回失去本轮通过资格。\n\n## 改动（相对 T0004 开始前的提交 425eede）\n\n- `truth/FESTIVA-工程架构文档-草稿.md` → `truth/FESTIVA-工程架构文档.md`\n- `truth/FESTIVA-高保真设计文档-草稿.md` → `truth/ui/FESTIVA-高保真设计文档.md`\n- 两份文档：一级标题去掉“（草稿）”，状态行以“草稿。”开头；UI 文档内 11 处指向 reference/ 的相对链接由 `../reference/` 改为 `../../reference/`。正文其余部分未改。\n- README.md、truth/goals.md、reference/README.md：指向两份文档的链接改到新路径，链接文字去掉“（草稿）”。\n\n## 验收项\n\n- A1 通过：`git diff --cached -M --name-status 425eede -- truth` 显示工程文档为 R098 改名、UI 文档为 R085 移动；逐行差异只有一级标题、状态行和 11 处相对链接路径。\n- A2 通过：对 README.md、truth/goals.md、reference/README.md、truth/ui/FESTIVA-高保真设计文档.md、truth/FESTIVA-工程架构文档.md 运行本地相对链接检查，共 24 条相对链接，断链 0。\n- A3 通过（附说明）：排除 queue/tasks 与 .shell 后，`git grep` 旧文件名与旧位置无匹配（退出码 1）。旧路径仍出现在：机器账；已封存的 T0002；本任务 T0004 的记录；以及 T0006 被取代的旧批准基线 approval-001.md 与事件记录 task.md。后两处是工具生成的历史记录，不可也不应修改，性质与封存卷相同，但不在验收条件字面列出的范围内，请老师验收时知悉。\n\n## 说明\n\n- README.md 中“两份文档都标为草稿”、reference/README.md 中“见两份草稿”两句仍成立，留给 T0005 与父任务 T0003 的一致性检查处理。\n- truth/FESTIVA-产品设计文档.md 尚未创建，归 T0006。\n", "summary": "工程文档改为不带“草稿”的文件名，高保真设计文档移入 truth/ui/；入口链接与文档内相对链接已更新，24 条链接无断链", "verification": "passed"}
 
 ## 接手说明
 

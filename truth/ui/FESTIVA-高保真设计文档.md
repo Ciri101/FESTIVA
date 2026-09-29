@@ -2,7 +2,7 @@
 
 - 日期：2026-09-28
 - 状态：草稿。由现有高保真图片整理，待产品与设计确认；不是已批准的交互规格
-- 图片来源：[`reference/high-fi/`](../reference/high-fi/)
+- 图片来源：[`reference/high-fi/`](../../reference/high-fi/)
 - 范围：10 张 iPhone 页面截图；只能证明静态画面，不能证明实际点击行为或数据规则
 
 ## 1. 产品与设计目标
@@ -15,16 +15,16 @@ FESTIVA 面向希望发现、创建和参加节日聚会的国际学生。现有
 
 | 图片 | 页面 | 画面中的主要内容与操作 |
 | --- | --- | --- |
-| [272](../reference/high-fi/iPhone%2017%20-%20272.jpg) | Patti 对话 | 推荐需求、追问、两张活动推荐卡 |
-| [273](../reference/high-fi/iPhone%2017%20-%20273.jpg) | Conor 对话 | 创建需求、生成的派对草稿卡 |
-| [274](../reference/high-fi/iPhone%2017%20-%20274.jpg) | Lily 对话 | 社交偏好交流与写入个人资料的请求 |
-| [275](../reference/high-fi/iPhone%2017%20-%20275.jpg) | Create Party 表单 | 封面、基础信息、加入条件、规则、Create 按钮 |
-| [276](../reference/high-fi/iPhone%2017%20-%20276.jpg) | Party Details | 活动信息、申请、收藏、地图、描述及规则 |
-| [278](../reference/high-fi/iPhone%2017%20-%20278.jpg) | Join 首页 | 搜索、热门标签、推荐列表、底部导航及 Patti 入口 |
-| [280](../reference/high-fi/iPhone%2017%20-%20280.jpg) | Filter | 地图范围、节日、距离、交通、预算、时间、语言和场地 |
-| [281](../reference/high-fi/iPhone%2017%20-%20281.jpg) | Notice | 新/历史申请切换、申请人列表、拒绝/批准操作 |
-| [296](../reference/high-fi/iPhone%2017%20-%20296.jpg) | Create 首页 | 我主持的派对、通知入口、新建入口、Conor 入口 |
-| [297](../reference/high-fi/iPhone%2017%20-%20297.jpg) | Me 首页 | 学生资料、收藏与历史活动、地址及偏好、设置、Lily 入口 |
+| [272](../../reference/high-fi/iPhone%2017%20-%20272.jpg) | Patti 对话 | 推荐需求、追问、两张活动推荐卡 |
+| [273](../../reference/high-fi/iPhone%2017%20-%20273.jpg) | Conor 对话 | 创建需求、生成的派对草稿卡 |
+| [274](../../reference/high-fi/iPhone%2017%20-%20274.jpg) | Lily 对话 | 社交偏好交流与写入个人资料的请求 |
+| [275](../../reference/high-fi/iPhone%2017%20-%20275.jpg) | Create Party 表单 | 封面、基础信息、加入条件、规则、Create 按钮 |
+| [276](../../reference/high-fi/iPhone%2017%20-%20276.jpg) | Party Details | 活动信息、申请、收藏、地图、描述及规则 |
+| [278](../../reference/high-fi/iPhone%2017%20-%20278.jpg) | Join 首页 | 搜索、热门标签、推荐列表、底部导航及 Patti 入口 |
+| [280](../../reference/high-fi/iPhone%2017%20-%20280.jpg) | Filter | 地图范围、节日、距离、交通、预算、时间、语言和场地 |
+| [281](../../reference/high-fi/iPhone%2017%20-%20281.jpg) | Notice | 新/历史申请切换、申请人列表、拒绝/批准操作 |
+| [296](../../reference/high-fi/iPhone%2017%20-%20296.jpg) | Create 首页 | 我主持的派对、通知入口、新建入口、Conor 入口 |
+| [297](../../reference/high-fi/iPhone%2017%20-%20297.jpg) | Me 首页 | 学生资料、收藏与历史活动、地址及偏好、设置、Lily 入口 |
 
 ## 3. 信息架构与主要路径
 
