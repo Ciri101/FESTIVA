@@ -1,6 +1,10 @@
 {
   "truth_whitelist": [
-    "truth/goals.md"
+    "truth/goals.md",
+    "truth/FESTIVA-产品设计文档.md",
+    "truth/FESTIVA-工程架构文档.md",
+    "truth/ui/FESTIVA-高保真设计文档.md",
+    "truth/demo/FESTIVA-Demo架构方案.md"
   ],
   "version": 1,
   "window_capacity": 8
