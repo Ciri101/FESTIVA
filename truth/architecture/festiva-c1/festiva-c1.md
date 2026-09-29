@@ -3,7 +3,7 @@ name: festiva-c1
 description: FESTIVA C1 系统语境图的设计说明——视图注记、元素注记、《架构设计与制图规范》第 9 节评审清单回执与第 10 节回述
 layer: C1
 status: 已确认
-version: "1.0"
+version: "1.1"
 date: 2026-09-29
 ---
 
@@ -11,9 +11,9 @@ date: 2026-09-29
 
 > **三件同名**：图源是[工程架构文档](../../FESTIVA-工程架构文档.md)第 2 节自报 `%% name: festiva-c1` 的代码块；SVG 是本目录的 [festiva-c1.svg](festiva-c1.svg)，可移植版是 [portable/festiva-c1-portable.svg](portable/festiva-c1-portable.svg)；本文件是设计说明。**编号边表住工程架构文档第 2 节图后**，本文件不复制。
 >
-> **状态**：图经用户确认（2026-09-29，任务 [T0013](../../../queue/tasks/T0013/task.md)）。
+> **状态**：图经用户确认（2026-09-29，任务 [T0013](../../../queue/tasks/T0013/task.md)）；任务 [T0016](../../../queue/tasks/T0016/task.md) 更新技术标签后，用户重新确认（2026-09-29）。
 >
-> **命名注**：没有改名。元素名与工程架构文档第 1 节“统一命名”表一致。
+> **命名注**：没有改名。元素名与工程架构文档第 1 节“统一命名”表一致。技术标签由任务 [T0016](../../../queue/tasks/T0016/task.md)更新：云端大模型服务写“Qwen API（暂定）”，邮件发送服务写“服务商待定”。
 
 ## 1 视图注记
 
@@ -30,9 +30,9 @@ date: 2026-09-29
 | --- | --- | --- | --- |
 | 国际学生 | Person | 发现、创建、参加节日聚会；同一个人既可以是参与者，也可以是主办人 | 产品设计文档第 1 节 |
 | FESTIVA 系统 | Software System | 负责活动、申请、推荐与三个 AI 角色的全部业务，不负责地图、邮件投递、推送投递与大模型推理 | D4 |
-| 云端大模型服务 | External System | 按 FESTIVA 的请求完成对话与结构化输出；供应商待定 | D1、R4 |
+| 云端大模型服务 | External System | 按 FESTIVA 的请求完成对话与结构化输出；暂定 Qwen API，经 OpenAI 兼容接口接入 | D1、R4、T0016 |
 | Apple 地图服务 | External System | 地图显示、地址转坐标、跳转系统地图 App；不提供路线 | D2、R1 |
-| 邮件发送服务 | External System | 把学校邮箱验证码投递到学生邮箱；服务商待定 | C1、S6-1、D5 |
+| 邮件发送服务 | External System | 把学校邮箱验证码投递到学生邮箱；服务商待定（T0016 决定暂缓） | C1、S6-1、D5、T0016 |
 | Apple 推送通知服务 | External System | 把通知投递到用户设备 | D5 与 R6 备注 |
 
 ## 3 评审清单回执（规范第 9 节）

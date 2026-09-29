@@ -1,6 +1,6 @@
 # FESTIVA Demo 架构方案
 
-- 版本：0.3
+- 版本：0.4
 - 日期：2026-09-29
 - 状态：草稿。任务 [T0009](../../queue/tasks/T0009/task.md) 已通过验收，各章节尚未逐节确认（F1），见下方“章节状态”
 - 依据：经确认的 38 项裁决（任务 [T0003](../../queue/tasks/T0003/task.md)）；2026-09-29 决定 Demo 简化方案单独成文，`object/` 的实现以本文件为依据（任务 [T0009](../../queue/tasks/T0009/task.md)）
@@ -82,7 +82,7 @@
 | 开发工具 | Xcode（支持 iOS 17 以上 SDK 的稳定版） | 普通 Xcode 工程，不使用项目生成工具 |
 | 本地数据 | SwiftData | 全部业务数据；图片文件存 App 沙盒 |
 | 地图与位置 | MapKit、Core Location | 地图显示、地址转坐标、“在地图中打开”跳转系统地图 App；地理编码使用所用 SDK 中未弃用的系统接口 |
-| 云端大模型 | 用户自带密钥，App 经 HTTPS 直接调用 | 供应商待定；先定适配器接口（10.1、第 16 节） |
+| 云端大模型 | Qwen API（暂定），用户自带密钥，App 经 HTTPS 直接调用 | 经 OpenAI 兼容接口接入；型号须支持工具调用与 JSON Schema 结构化输出（任务 [T0016](../../queue/tasks/T0016/task.md)）；适配器接口见 10.1 |
 | 密钥保存 | 系统钥匙串（Keychain） | 只存本机，不随 iCloud 同步 |
 | 图片选择 | PhotosUI（PhotosPicker） | 上传封面 |
 | 测试 | Xcode 自带测试框架 | 业务规则与推荐排序的单元测试 |
@@ -99,7 +99,7 @@ flowchart TB
     store[("本地数据<br/>[SwiftData 与沙盒文件]<br/>用户、活动、申请、通知、图片")]
     keychain[("钥匙串<br/>[Keychain]<br/>用户自带的 LLM 密钥")]
   end
-  llm["云端大模型服务<br/>[External System]<br/>供应商待定"]
+  llm["云端大模型服务<br/>[External System]<br/>Qwen API（暂定）"]
   maps["Apple 地图服务<br/>[External System]"]
   user -->|"操作"| app
   app -->|"读写"| store
@@ -448,13 +448,11 @@ AIOrchestrator 在 App 内完成工程 5.1 中 AI 编排服务的工作：
 - 节日与标签列表的维护界面。
 - 对话记录的保存。
 - 界面多语言：界面按高保真图使用英文。
-- 选定模型供应商（项目目标的待决定问题）。
 
 ## 16. 待确认事项
 
 > 状态：草稿
 
-- 【待确认】云端大模型供应商（项目目标）。决定后实现对应的 LLMClient 适配器；在此之前，其余部分可以用演示脚本完成开发和测试。
 - 【待确认】标签名称与热门标签中的 “Girls only”，见产品第 11 节。确认之前，种子的标签名暂用 UI 附录 A 的 “Deep talk party”，标签列表暂不含 Girls only。
 - 【待确认】角色头像按钮的样式与角色名（W1-1）。Demo 暂按现有截图实现。
 
