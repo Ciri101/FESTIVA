@@ -10,5 +10,9 @@
   "festiva-c3-api/portable/festiva-c3-api-portable.svg": {
     "source": "festiva-c3-api/festiva-c3-api.svg",
     "source_hash": "9dc5ba040d16d748"
+  },
+  "festiva-c3-app/portable/festiva-c3-app-portable.svg": {
+    "source": "festiva-c3-app/festiva-c3-app.svg",
+    "source_hash": "cf0626b6473330f4"
   }
 }

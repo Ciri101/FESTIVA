@@ -1,0 +1,65 @@
+%% name: festiva-c3-app
+%% home: festiva-c3-app
+flowchart TB
+  student["国际学生<br/>[Person]"]
+  subgraph ios["iOS App"]
+    subgraph vlayer["界面层（View）"]
+      signinV["登录界面<br/>注册与登录<br/>[sign-in views · SwiftUI]"]
+      joinV["Join 界面<br/>首页、筛选、搜索、详情<br/>[Join views · SwiftUI]"]
+      createV["Create 界面<br/>主持的活动、表单<br/>申请通知<br/>[Create views · SwiftUI]"]
+      meV["Me 界面<br/>资料、我的申请<br/>收藏、设置<br/>[Me views · SwiftUI]"]
+      chatV["对话界面<br/>三个角色共用<br/>含确认卡片<br/>[chat views · SwiftUI]"]
+    end
+    subgraph vmlayer["视图模型层（ViewModel）"]
+      signinVM["登录视图模型<br/>登录流程与会话状态<br/>[sign-in view model]"]
+      joinVM["Join 视图模型<br/>推荐、筛选、详情与申请<br/>[Join view model]"]
+      createVM["Create 视图模型<br/>创建、编辑、审批<br/>[Create view model]"]
+      meVM["Me 视图模型<br/>资料、申请记录、收藏<br/>[Me view model]"]
+      chatVM["对话视图模型<br/>消息与确认卡片<br/>确认后才写入<br/>[chat view model]"]
+    end
+    subgraph mlayer["模型层（Model）"]
+      apiClient["业务接口客户端<br/>调用 API 服务的业务接口<br/>[business API client · HTTPS]"]
+      chatClient["对话客户端<br/>流式对话<br/>[chat client · 流式 HTTPS]"]
+      imageIO["图片存取适配器<br/>上传与加载图片<br/>[image storage adapter]"]
+      mapsA["地图适配器<br/>地址转坐标、打开地图<br/>[maps adapter · MapKit]"]
+      locA["定位适配器<br/>当前位置与授权<br/>[location adapter · Core Location]"]
+      pushR["推送注册器<br/>注册设备、接收推送<br/>[push registrar · APNs]"]
+    end
+  end
+  api["API 服务<br/>[Container]"]
+  aiSvc["AI 编排服务<br/>[Container]"]
+  files["文件存储<br/>[Container]"]
+  maps["Apple 地图服务<br/>[External System]"]
+  apns["Apple 推送通知服务<br/>[External System]"]
+  student -->|"使用"| vlayer
+  signinV -->|"操作"| signinVM
+  joinV -->|"操作"| joinVM
+  createV -->|"操作"| createVM
+  meV -->|"操作"| meVM
+  chatV -->|"操作"| chatVM
+  vmlayer -->|"业务请求"| apiClient
+  chatVM -->|"角色对话"| chatClient
+  chatVM -->|"预填草稿"| createVM
+  createVM -->|"上传封面"| imageIO
+  meVM -->|"上传头像"| imageIO
+  vlayer -->|"加载图片"| imageIO
+  joinVM -->|"取起点"| locA
+  joinVM -->|"打开地图"| mapsA
+  createVM -->|"地址转坐标"| mapsA
+  signinVM -->|"注册设备"| pushR
+  pushR -.->|"新通知"| vmlayer
+  apiClient -->|"业务请求"| api
+  chatClient -->|"角色对话"| aiSvc
+  imageIO -->|"存取图片"| files
+  mapsA -->|"地图与坐标"| maps
+  vlayer -->|"显示地图"| maps
+  pushR -->|"注册设备"| apns
+  apns -.->|"送达通知"| pushR
+  classDef shell fill:#deebf7,stroke:#5b81a8
+  classDef ext fill:#f2f2f2,stroke:#8a8a8a
+  class signinV,joinV,createV,meV,chatV,signinVM,joinVM,createVM,meVM,chatVM,apiClient,chatClient,imageIO,mapsA,locA,pushR shell
+  class student,api,aiSvc,files,maps,apns ext
+  style ios fill:none,stroke:#4a90e2,stroke-dasharray:6 4
+  style vlayer fill:none,stroke:#5b81a8,stroke-dasharray:2 2
+  style vmlayer fill:none,stroke:#5b81a8,stroke-dasharray:2 2
+  style mlayer fill:none,stroke:#5b81a8,stroke-dasharray:2 2

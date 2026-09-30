@@ -1,8 +1,8 @@
 # FESTIVA 工程架构文档
 
-- 版本：0.8
+- 版本：0.9
 - 日期：2026-09-29
-- 状态：第 2、3 节（C1 系统语境图、C2 容器图）已逐节确认（2026-09-29，见任务 [T0013](../queue/tasks/T0013/task.md)），任务 [T0016](../queue/tasks/T0016/task.md) 更新两节的技术标签后重新确认（2026-09-29）；第 4.2 节改为指向已确认的 API 服务 C3（任务 [T0018](../queue/tasks/T0018/task.md)）；其余章节仍为草稿（F1），见下方“章节状态”。任务 [T0007](../queue/tasks/T0007/task.md) 写成草稿并通过验收
+- 状态：第 2、3 节（C1 系统语境图、C2 容器图）已逐节确认（2026-09-29，见任务 [T0013](../queue/tasks/T0013/task.md)），任务 [T0016](../queue/tasks/T0016/task.md) 更新两节的技术标签后重新确认（2026-09-29）；第 4.1、4.2 节改为指向已确认的 iOS App、API 服务 C3（任务 [T0019](../queue/tasks/T0019/task.md)、任务 [T0018](../queue/tasks/T0018/task.md)）；其余章节仍为草稿（F1），见下方“章节状态”。任务 [T0007](../queue/tasks/T0007/task.md) 写成草稿并通过验收
 - 依据：经确认的 38 项裁决（任务 [T0003](../queue/tasks/T0003/task.md)）；活动字段与产品规则见[产品设计文档](FESTIVA-产品设计文档.md)；原始图示为 [C4 model.png](../reference/C4%20model.png)
 - Demo 开发版本的简化实现不在本文件，见 [Demo 架构方案](demo/FESTIVA-Demo架构方案.md)
 
@@ -23,7 +23,7 @@
 | 1 与 C4 原图的关系 | 草稿 |
 | 2 系统上下文 | 已确认（2026-09-29，T0013）；T0016 更新技术标签后重新确认 |
 | 3 容器 | 已确认（2026-09-29，T0013）；T0016 更新技术标签后重新确认 |
-| 4 组件 | 草稿；4.2 已由 API 服务的 C3 取代（2026-09-29，T0018） |
+| 4 组件 | 草稿；4.1、4.2 已由 iOS App、API 服务的 C3 取代（2026-09-29，T0019、T0018） |
 | 5 AI 角色编排 | 草稿 |
 | 6 推荐排序 | 草稿 |
 | 7 数据实体 | 草稿 |
@@ -206,41 +206,23 @@ C2 边表（外沿边写明所锚的 C1 边）：
 | 容器 | 详设文档 | 图源 |
 | --- | --- | --- |
 | API 服务 | [festiva-c3-api.md](architecture/festiva-c3-api/festiva-c3-api.md) | [festiva-c3-api.mmd](architecture/festiva-c3-api/festiva-c3-api.mmd) |
+| iOS App | [festiva-c3-app.md](architecture/festiva-c3-app/festiva-c3-app.md) | [festiva-c3-app.mmd](architecture/festiva-c3-app/festiva-c3-app.mmd) |
 
 C3 在 C2 定稿后逐个容器评估，经决定才画（[图纸区规则](architecture/AGENTS.md)关键规则 6）：API 服务、iOS App、AI 编排服务三张依次由任务 [T0018](../queue/tasks/T0018/task.md)、[T0019](../queue/tasks/T0019/task.md)、[T0020](../queue/tasks/T0020/task.md) 绘制，数据库与文件存储不画。第 4 节中尚未被正式 C3 取代的组件图是说明图，不列入本表。
 
 ## 4. 组件
 
-> 状态：草稿；4.2 已由 API 服务的 C3 取代（2026-09-29，任务 [T0018](../queue/tasks/T0018/task.md)）
+> 状态：草稿；4.1、4.2 已由 iOS App、API 服务的 C3 取代（2026-09-29，任务 [T0019](../queue/tasks/T0019/task.md)、任务 [T0018](../queue/tasks/T0018/task.md)）
 
 ### 4.1 iOS App
 
-```mermaid
-flowchart LR
-  subgraph app["iOS App"]
-    join["Join 板块<br/>[Component]<br/>推荐列表、搜索、筛选、活动详情"]
-    create["Create 板块<br/>[Component]<br/>我主持的活动、创建表单、申请通知"]
-    me["Me 板块<br/>[Component]<br/>资料、我的申请、收藏、设置"]
-    rec["推荐展示<br/>[Component]<br/>理由标签与不符合项"]
-    chat["角色对话<br/>[Component]<br/>Patti、Conor、Lily 共用"]
-    card["确认卡片<br/>[Component]<br/>推荐卡、活动草稿、资料摘要"]
-    loc["位置<br/>[Component]<br/>当前定位或手动选择"]
-    client["API 客户端<br/>[Component]<br/>认证令牌、请求与重试"]
-  end
-  join --> rec
-  join --> chat
-  create --> chat
-  me --> chat
-  chat --> card
-  card -->|"用户确认后写入"| client
-  join --> loc
-  join --> client
-  create --> client
-  me --> client
-```
+本节原来的草稿说明图已由正式的 C3 组件图取代（任务 [T0019](../queue/tasks/T0019/task.md)，2026-09-29 经用户确认）：图源、渲染图、组件注记（含 Demo 对应）、编号边表与评审回执见 [architecture/festiva-c3-app/](architecture/festiva-c3-app/festiva-c3-app.md)，并在第 3 节登记。要点：
 
-- 推荐展示是 C4 原图中的“Embedded Recommendation Module”，只负责展示排序结果、理由标签和不符合项，不做排序（D3）。
-- 三个角色共用一套对话组件，按板块切换角色；确认卡片是唯一能把 AI 结果变成数据的入口（B1）。
+- 按 MVVM 分三层：界面层（登录、Join、Create、Me、对话五组 SwiftUI 界面）只渲染状态、转交操作；视图模型层每个板块一个，持有页面状态与流程，不做业务判断；模型层是实现中心侧接口的适配器（业务接口客户端、对话客户端、图片存取、地图、定位、推送注册）。
+- 业务接口按板块拆成子接口，每个视图模型只依赖本板块的子接口，由同一个客户端实现（T0019 中用户的决定）。
+- C4 原图的“Embedded Recommendation Module”对应 Join 界面中的推荐展示，只展示排序结果、理由标签和不符合项，不做排序（D3）。
+- 确认卡片在对话界面中，由对话视图模型管理，是唯一能把 AI 结果变成数据的入口（B1）；Conor 的草稿交给 Create 视图模型预填表单，用户点 Create 才发布（B3）。
+- 地址转坐标、在地图中打开、定位与推送注册经适配器；界面直接显示系统地图，接受为平台例外。
 
 ### 4.2 API 服务
 
@@ -489,7 +471,7 @@ stateDiagram-v2
 | D1 | 1、2、3、12 |
 | D2 | 1、2、3、11 |
 | D3 | 1、3、4.1、6 |
-| D4 | 1、2、3（C1、C2 正式架构图）、4.2（API 服务的正式 C3），以及第 4 节其余的说明图 |
+| D4 | 1、2、3（C1、C2 正式架构图）、4.1 与 4.2（iOS App、API 服务的正式 C3），以及第 4 节其余的说明图 |
 | D5 | 1、2、3 |
 | E4 | 3 |
 | R1 | 1、2、3、11 |
