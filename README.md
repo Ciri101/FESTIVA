@@ -7,7 +7,7 @@ FESTIVA 是面向国际学生的 iOS 节日聚会项目，目标是帮助用户�
 - [项目目标](truth/goals.md)：当前目标、范围和待决定问题。
 - [产品设计文档](truth/FESTIVA-产品设计文档.md)：做什么、规则是什么。
 - [高保真设计文档](truth/ui/FESTIVA-高保真设计文档.md)：10 张界面图所呈现的页面、路径与设计问题。
-- [工程架构文档](truth/FESTIVA-工程架构文档.md)：C4 图中的系统、容器、数据流与工程待确认事项。
+- [工程架构文档](truth/FESTIVA-工程架构文档.md)：C4 的系统、容器与组件三层架构图（组件图覆盖 API 服务、iOS App、AI 编排服务），以及数据流与工程待确认事项。
 - [Demo 架构方案](truth/demo/FESTIVA-Demo架构方案.md)：Demo 开发版本如何简化实现，`object/` 的实现依据。
 - [参考图](reference/)：C4 图与 `high-fi/` 高保真图片。
 
