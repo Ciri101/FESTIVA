@@ -70,6 +70,10 @@ class Repo:
             destination = self.root / name
             destination.parent.mkdir(parents=True, exist_ok=True)
             shutil.copyfile(SOURCE / name, destination)
+        # The project's whitelist names truth files that fixtures do not copy; use the template default.
+        (self.root / 'charter/config.json').write_text(json.dumps(
+            {'truth_whitelist': ['truth/goals.md'], 'version': 1, 'window_capacity': 8},
+            ensure_ascii=False, indent=2, sort_keys=True) + '\n')
         self.git('init', '-q')
         self.git('add', '.')
         self.git('commit', '-qm', 'Template test baseline; no real user task')
@@ -258,7 +262,7 @@ class QueueIntegration(unittest.TestCase):
         self.assertEqual(self.r.write('approve', ident, *AUTH, expected=1)['code'], 'sealed')
         self.assertEqual(self.r.raw(), before)
         next_id = self.r.create()['task']
-        self.assertEqual(next_id, 'T0002')
+        self.assertEqual(next_id, 'T2')
 
     def test_11_nonexistent_and_rejected_dependencies_rejected(self):
         self.r.create(deps=['T9999'], expected=1)
@@ -334,8 +338,28 @@ class QueueIntegration(unittest.TestCase):
     def test_19_parallel_registration_has_no_duplicate_or_lost_ids(self):
         with ThreadPoolExecutor(max_workers=8) as pool:
             ids = list(pool.map(lambda _: self.r.create(approve=False)['task'], range(12)))
-        self.assertEqual(sorted(ids), [f'T{i:04d}' for i in range(1, 13)])
+        self.assertEqual(sorted(ids, key=lambda i: int(i[1:])), [f'T{i}' for i in range(1, 13)])
         self.assertEqual(self.r.call('doctor')['seq'], 13)
+
+    def test_19b_natural_ids_sort_by_number(self):
+        ids = [self.r.create(approve=False)['task'] for _ in range(8)]
+        ids += [self.r.create()['task'] for _ in range(2)]
+        self.assertEqual(ids, [f'T{i}' for i in range(1, 11)])
+        self.assertEqual(self.r.create(deps=['T0009'], expected=1)['code'], 'graph')
+        self.r.create(deps=['T09'], expected=1)
+        last = self.r.create(deps=['T10', 'T9'])['task']
+        self.assertEqual(last, 'T11')
+        status = self.r.call('status')
+        self.assertEqual(status['window']['occupied'], ['T9', 'T10', 'T11'])
+        self.assertEqual([t['id'] for t in status['tasks']], [f'T{i}' for i in range(1, 12)])
+        blocked = self.r.status('T11')['blocked']
+        self.assertLess(next(i for i, s in enumerate(blocked) if 'T9 ' in s),
+                        next(i for i, s in enumerate(blocked) if 'T10 ' in s))
+        sources = [f['source'] for f in self.r.call('state', 'get')['files']]
+        homes = [s.split('/')[2] for s in sources if s.startswith('queue/tasks/')]
+        self.assertEqual(list(dict.fromkeys(homes)), ['T9', 'T10', 'T11'])
+        self.assertEqual(self.r.call('doctor')['seq'], 12)
+        self.assertEqual(self.r.commit().returncode, 0)
 
     def test_20_tampered_projection_is_detected_and_repair_preserves_difference(self):
         ident = self.r.create()['task']
@@ -488,8 +512,19 @@ class QueueIntegration(unittest.TestCase):
         self.assertIn(original, (other.root / 'queue/tasks/T0001/legacy-import.md').read_text())
         backups = list((other.root / '.shell/local/recovery').rglob('task.md'))
         self.assertTrue(any(p.read_text() == original for p in backups))
-        self.assertEqual(other.create()['task'], 'T0004')
+        # Legacy zero-padded IDs stay valid; new IDs continue the numbering without padding.
+        self.assertEqual(other.create()['task'], 'T4')
+        self.assertEqual(other.status('T0003')['status'], '登记')
+        self.assertEqual(other.call('doctor')['protection'], 'ready')
         self.assertEqual(other.commit().returncode, 0)
+
+    def test_35b_same_number_in_two_spellings_is_rejected(self):
+        other = Repo(self.tmp.name, 'migration-duplicate', initialize=False)
+        self.legacy(other, 'T0001')
+        self.legacy(other, 'T1')
+        result = other.call('migrate', '--preview', expected=1)
+        self.assertIn('重复', result['message'])
+        self.assertFalse((other.root / '.shell/queue/ledger.jsonl').exists())
 
     def test_36_migration_never_guesses_old_authorization_or_overwrites(self):
         other = Repo(self.tmp.name, 'migration-active', initialize=False)
@@ -566,7 +601,7 @@ sys.exit(q.main(['--root',root]+sys.argv[4:]))
         retried = self.r.call(*self.crash_create_args())
         self.assertTrue(retried['already_applied'])
         self.assertEqual(self.r.call('doctor')['seq'], 2)
-        self.assertTrue((self.r.root / 'queue/tasks/T0001/task.md').exists())
+        self.assertTrue((self.r.root / 'queue/tasks/T1/task.md').exists())
 
     def test_40_real_lock_contention_and_killed_owner_auto_release(self):
         args = self.crash_create_args()
@@ -592,7 +627,7 @@ sys.exit(q.main(['--root',root]+sys.argv[4:]))
         self.assertNotEqual(self.r.git('commit', '-qm', 'checker crash', expected=None).returncode, 0)
         code.write_bytes(original)
         # Same-user bypass is deliberately outside the guarantee, not a hidden claim of security.
-        path = self.r.root / 'queue/tasks/T0001/task.md'; path.write_text('tampered projection')
+        path = self.r.root / 'queue/tasks/T1/task.md'; path.write_text('tampered projection')
         self.r.git('add', '.')
         self.assertEqual(self.r.git('commit', '--no-verify', '-qm', 'test-only explicit bypass').returncode, 0)
         self.r.call('doctor', expected=1)

@@ -1,9 +1,16 @@
 """Deterministic full-file transport: truth whitelist + in-window task packages only."""
 import json
+import re
 from queue_model import require, sha, line, unique_object
 from queue_v2 import CONFIG, WINDOW, config, projections
 
 PACK_FORMAT = 'devtemplate-state/1'
+
+
+def order(item):
+    # Task packages sort by number (T9 before T10); other sources keep path order.
+    m = re.match(r'(queue/tasks/)T([0-9]+)(/.*)\Z', item[0])
+    return (m[1], int(m[2]), m[3]) if m else (item[0], 0, '')
 
 
 def load_config(store):
@@ -41,7 +48,7 @@ def collect(store, raw, events, tasks):
         require('\x00' not in value, f'状态源含二进制内容：{name}', 'state_source')
     metadata = {'format': PACK_FORMAT, 'seq': len(events), 'ledger_sha256': sha(raw),
                 'config_sha256': sha(safe(store.root, CONFIG).read_bytes()),
-                'sources': [{'path': store.gpath(n), 'sha256': sha(v), 'bytes': len(v)} for n, v in sorted(sources.items())]}
+                'sources': [{'path': store.gpath(n), 'sha256': sha(v), 'bytes': len(v)} for n, v in sorted(sources.items(), key=order)]}
     return sha(line(metadata).encode()), metadata, sources
 
 
@@ -63,7 +70,7 @@ def cached(store, token, metadata, sources):
     require(set(doc) == {'context','metadata','files'} and doc['context'] == token and doc['metadata'] == metadata,
             '状态包清单被改写；重新 state get 重建。', 'state_cache')
     require(isinstance(doc['files'], list) and len(doc['files']) == len(sources), '状态包文件清单不完整。', 'state_cache')
-    for index, (name, data) in enumerate(sorted(sources.items())):
+    for index, (name, data) in enumerate(sorted(sources.items(), key=order)):
         row = doc['files'][index]
         require(set(row) == {'source','parts'} and row['source'] == store.gpath(name) and
                 isinstance(row['parts'], list) and row['parts'], '状态包文件项不合法。', 'state_cache')
@@ -86,7 +93,7 @@ def get(store, raw, events, tasks, chunk_chars=24000):
     token = f'{token}-{chunk_chars}'
     home = f'.shell/local/state/{token}'
     doc = {'context': token, 'metadata': meta, 'files': []}
-    for i, (name, data) in enumerate(sorted(sources.items())):
+    for i, (name, data) in enumerate(sorted(sources.items(), key=order)):
         value = data.decode('utf-8')
         pieces = [value[n:n+chunk_chars] for n in range(0, len(value), chunk_chars)] or ['']
         parts = []
