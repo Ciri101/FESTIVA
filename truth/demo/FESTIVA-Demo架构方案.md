@@ -1,8 +1,8 @@
 # FESTIVA Demo 架构方案
 
-- 版本：0.13
+- 版本：0.14
 - 日期：2026-09-30
-- 状态：第 1–15 节已逐节确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)），是 `object/` 中 iOS Demo 实现的基线；第 16 节列出仍待确认的事项。任务 [T0009](../../queue/tasks/T0009/task.md) 写成草稿并通过验收，见下方“章节状态”
+- 状态：第 1–15 节已逐节确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)），是 `object/` 中 iOS Demo 实现的基线；第 2、9 节由任务 [T0029](../../queue/tasks/T0029/task.md) 写明通知的入口后重新确认（2026-09-30）；第 16 节列出仍待确认的事项。任务 [T0009](../../queue/tasks/T0009/task.md) 写成草稿并通过验收，见下方“章节状态”
 - 依据：经确认的 38 项裁决（任务 [T0003](../../queue/tasks/T0003/task.md)）；2026-09-29 决定 Demo 简化方案单独成文，`object/` 的实现以本文件为依据（任务 [T0009](../../queue/tasks/T0009/task.md)）
 - 相关文档：[项目目标](../goals.md)、[产品设计文档](../FESTIVA-产品设计文档.md)（字段与规则）、[工程架构文档](../FESTIVA-工程架构文档.md)（正式架构）、[高保真设计文档](../ui/FESTIVA-高保真设计文档.md)（界面与样例数据）
 
@@ -20,14 +20,14 @@
 | 章节 | 状态 |
 | --- | --- |
 | 1 目标与约束 | 已确认（2026-09-30，T0028） |
-| 2 演示流程 | 已确认（2026-09-30，T0028） |
+| 2 演示流程 | 已确认（2026-09-30，T0028）；T0029 写明通知的入口后重新确认（2026-09-30） |
 | 3 技术选型 | 已确认（2026-09-30，T0028） |
 | 4 总体结构 | 已确认（2026-09-30，T0028） |
 | 5 模块与目录 | 已确认（2026-09-30，T0028） |
 | 6 页面范围 | 已确认（2026-09-30，T0028） |
 | 7 本地数据 | 已确认（2026-09-30，T0028） |
 | 8 演示账号与预置认证 | 已确认（2026-09-30，T0028） |
-| 9 业务规则的实现 | 已确认（2026-09-30，T0028） |
+| 9 业务规则的实现 | 已确认（2026-09-30，T0028）；T0029 写明通知的入口后重新确认（2026-09-30） |
 | 10 AI 角色 | 已确认（2026-09-30，T0028） |
 | 11 推荐排序 | 已确认（2026-09-30，T0028） |
 | 12 简化项与正式架构对照 | 已确认（2026-09-30，T0028） |
@@ -52,7 +52,7 @@
 
 ## 2. 演示流程
 
-> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）；任务 [T0029](../../queue/tasks/T0029/task.md) 写明通知的入口后重新确认（2026-09-30）
 
 视频脚本骨架。前提：已重置演示数据，演示时钟为 2027-01-20，位置来源为演示位置（见 7.3），当前账号为 Ciri Shi。数据见 UI 附录 A。
 
@@ -63,7 +63,7 @@
 | 3 | Patti 推荐 | Ciri Shi | 点 Patti 头像 → AI 服务使用说明 → 同意 → 说想参加中国新年派对、希望用中文交流、想吃中国菜 → 推荐卡 | 同意一次三个角色通用；偏好默认只影响排序；只推荐未结束的活动（W2-2、B4、S4-1） |
 | 4 | 详情与申请 | Ciri Shi | 点 P3 推荐卡 → 活动详情 → Send request → 结果提示 | 获批前只显示区域；主按钮变为“撤回申请”（C5、S9-1） |
 | 5 | 主办审批 | Freeman Wu | 设置 → 演示：切换账号 → Create → 铃铛 → 申请通知 → 通过 Ciri 的申请 | 申请人的公开资料含性别；处理后移到 Past（产品 7.4、W2-4） |
-| 6 | 申请结果 | Ciri Shi | 切回 Ciri → Me → 我的申请 → P3 详情 → 在地图中打开 | 获批后显示精确地址，跳转系统地图 App（C5、R1） |
+| 6 | 申请结果 | Ciri Shi | 切回 Ciri → Me → 我的申请 → P3 详情 → 在地图中打开 | “我的申请”带未读角标，P3 为“已加入”并带未读标记（产品 7.3、9.4）；获批后显示精确地址，跳转系统地图 App（C5、R1） |
 | 7 | Conor 创建活动 | Ciri Shi | Create → Conor → 描述想办的聚会 → 草稿卡 → 预填的创建表单 → 上传封面 → Create → 活动管理 | AI 只给预填稿，“建议”字段有标记，点 Create 才发布（B3、S5-1） |
 | 8 | Lily 整理资料 | Ciri Shi | Me → Lily → 描述自己的社交风格 → 请 Lily 写入资料 → 资料摘要卡逐条勾选 → 确认 → 回 Me 查看 Personality | 逐条确认后才写入（B6） |
 | 9（可选） | 处理 P2 的申请 | Ciri Shi | Create → 铃铛（角标 4）→ 通过或拒绝 | 处理后移到 Past，申请人收到结果通知（W2-4、C4） |
@@ -281,7 +281,7 @@ object/
 
 ## 9. 业务规则的实现
 
-> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）；任务 [T0029](../../queue/tasks/T0029/task.md) 写明通知的入口后重新确认（2026-09-30）
 
 业务接口放在 Domain，按板块拆成子接口（第 5 节），Demo 中由 Data 模块的 LocalFestivaAPI 一并实现。方法都是 `async throws`，以后换成网络实现时，调用方式不变。
 
@@ -310,8 +310,8 @@ protocol CreateAPI: FestivaReadAPI {
     func cancelParty(_ id: PartyID) async throws
     func applications(for party: PartyID) async throws -> [ApplicationItem]
     func decide(_ application: MembershipID, approve: Bool) async throws
-    func notifications() async throws -> [NotificationItem]
-    func markRead(_ ids: [NotificationID]) async throws
+    func notifications() async throws -> [NotificationItem]       // 主办人的通知，未读数即铃铛角标
+    func markRead(_ ids: [NotificationID]) async throws            // 打开申请通知页时标为已读
 }
 
 protocol MeAPI: FestivaReadAPI {
@@ -320,6 +320,8 @@ protocol MeAPI: FestivaReadAPI {
     func withdraw(from party: PartyID) async throws               // 在“我的申请”中撤回
     func leave(_ party: PartyID) async throws                     // 在“我的申请”中退出
     func setFavorite(_ party: PartyID, _ isFavorite: Bool) async throws
+    func applicationNotifications() async throws -> [NotificationItem]   // 申请人的通知，未读数即“我的申请”角标
+    func markRead(_ ids: [NotificationID]) async throws            // 打开“我的申请”时标为已读
 }
 
 protocol ChatAPI: FestivaReadAPI {
@@ -336,7 +338,7 @@ typealias FestivaAPI = JoinAPI & CreateAPI & MeAPI & ChatAPI
 - **一次操作一次保存**：每个写入方法在同一个 ModelContext 中完成全部检查和修改后保存一次；任何检查失败就回滚，不留下半完成的状态。这对应工程 8 中“同一个数据库事务”的要求，包括名额检查和修改性别时的连带处理。
 - **规则来源**：申请、审批与名额按产品第 7 节（C4、S7-1、S7-2）；“参加者性别”的资格与隐藏按产品 7.2（C3、U2）；修改性别时两个方向的连带处理按产品 7.2（U4、T0027），修改前用 `genderChangeImpact` 取得受影响的活动并提示用户；取消与修改活动时的通知按产品 7.2 与第 9 节；人数上限不能改到低于已加入人数（产品 5.1，V1）；活动取消后申请冻结（产品 7.2，V2）；活动须有坐标，地址转坐标由界面经地图适配器完成，失败不能提交（产品 5.4，V5）。
 - **可见范围**：LocalFestivaAPI 按查看者返回字段。精确地址和坐标只给主办人和已加入的成员（C5）；私有资料只给本人；饮食过敏只在申请人选择分享时给该活动的主办人（产品 6.3、C9）。Demo 虽然在本机，也不把这些字段交给界面，以保持与正式架构一致。
-- **通知**：写入 NotificationRecord，铃铛角标为未读数；没有推送。事件按工程 9，另加产品 7.2 中 U4 给主办人的通知。
+- **通知**：写入 NotificationRecord；没有推送。事件按工程 9，另加产品 7.2 中 U4 给主办人的通知。入口与已读按产品 7.3：主办人的通知经 CreateAPI 读取，未读数为铃铛角标；申请人的通知经 MeAPI 读取，未读数为“我的申请”的角标；打开对应页面时调用 `markRead`。CreateAPI 与 MeAPI 的 `markRead` 签名相同，由 LocalFestivaAPI 实现一次，只标记当前用户的通知。
 - **错误**：规则拒绝时返回明确的错误类型（例如已满、不符合参加条件、活动已结束），界面按产品 9.3、9.9 显示原因和下一步。
 
 ## 10. AI 角色
