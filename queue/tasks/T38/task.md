@@ -3,12 +3,12 @@
 ```json
 {
   "id": "T38",
-  "revision": 258,
-  "assignee": "claude",
+  "revision": 259,
+  "assignee": null,
   "parent": null,
   "deps": [],
   "round": 1,
-  "status": "交付"
+  "status": "通过"
 }
 ```
 
@@ -36,6 +36,7 @@
 - #256｜claim｜claude｜{"expect": 255, "id": "T38"}
 - #257｜deliver｜claude｜{"artifacts": [{"path": "AGENTS.md", "sha256": "811e4617c3d3d414fcbb355efd3e52cb353927ccb1b297c99d1154c938958edd"}, {"path": "gate/AGENTS.md", "sha256": "eb47894bfb4d08c70f277b25fa798876878ef7702739f7b2d5cbe97365c421d1"}], "expect": 256, "id": "T38", "receipt": "# T38 交付回执：根契约三处补正\n\n- 执行：claude，2026-09-30\n- 自检结论：passed。未独立验证。\n\n## 改动\n\n- AGENTS.md 第 5 节“队列工具测试”：命令改为 `python3 -B -m unittest discover -s gate -p 'test_*.py'`，说明注明含队列与状态包两组、约 3 分钟。\n- gate/AGENTS.md：集成测试指引改为指向队列回归、状态包回归两组测试与 gate/checks.md 的命令。\n- AGENTS.md 第 17 条：补入“zsh 里别用 `echo` 输出等号开头的整行，开头的 `=` 会被当作查命令路径展开而报错，分隔线加引号”；依据句补指本任务。\n- AGENTS.md 第 11 条：补入“用户要求收尾交接时，交接说明在最后一件任务通过之前用 `task handoff` 写进该任务”；把守补“交接时机靠自觉”。放在第 11 条而不是先前建议的第 22 条：第 11 条管收尾，第 22 条是子代理一组里的上下文占用交接。\n\n## 验收标准逐条\n\n| 编号 | 结果 | 证据 |\n|---|---|---|\n| A1 | 满足 | 在仓库根实跑 `python3 -B -m unittest discover -s gate -p 'test_*.py'`：Ran 90 tests，OK，退出码 0 |\n| A2 | 满足 | 根契约第 5 节、gate/AGENTS.md 与 gate/checks.md 第 7 行的命令一致，都覆盖两组测试 |\n| A3 | 满足 | 第 11、17 条已写入并标明把守；第 4 节规则仍为 1–22 条。zsh 说法实测：`zsh -c 'echo ====='` 输出 `zsh:1: ==== not found`，退出码 1；加引号的 `echo '====='` 输出 `=====`，退出码 0 |\n| A4 | 交付后写入 | 交付后用 `task handoff T38` 写入本会话交接说明，见任务视图“接手说明” |\n| A5 | 满足 | `git diff --name-only` 只有 AGENTS.md、gate/AGENTS.md 与机器账；两文件 40 个相对链接，断链 0；U+00A7 零命中；`python3 tool/shell.py doctor`：protection ready，退出码 0 |\n\n## 未验证\n\n- 没有独立审阅者核对，以上读数都是执行者自报。\n- 本地提交，未推送。\n", "summary": "根契约测试命令改为两组全跑（90 项），协作纪律补 zsh 等号教训，第 11 条写明交接须在最后一件任务通过前写入", "verification": "passed"}
 - #258｜handoff｜claude｜{"expect": 257, "id": "T38", "text": "交接说明（2026-09-30，claude，会话收尾。按根契约第 11 条，写在本任务通过之前；下个会话从这里接续。）\n\n一、状态\n- 全部改动已提交到本地 main，未推送；本地领先 origin 一百余个提交。origin 是公开仓库，推送须用户明确指示。\n- 本会话的任务：T34 取消并入 T35；T35、T36、T37 已通过；T38（本任务）交付待验收。T38 通过后窗口为 0/8。\n\n二、本会话改了什么（正本位置）\n- 根目录 AGENTS.md 是“FESTIVA 根契约”（T35）：身份、地图、开工三步、规则 22 条、命令、用语。全局规则只在这里；charter/AGENTS.md 只剩 config.json 与改规则的手续，不再每次开工必读。\n- 区契约去重、README 瘦身，根契约只留原则、操作细节在队列规则（T36）。\n- state get 自动清理过期状态包缓存，当前状态各尺寸全留，过期版本只留最近 2 个（T37）。\n- 测试命令改为同时跑两组（90 项）；协作纪律补 zsh 等号教训；交接时机写进第 11 条（T38）。\n\n三、T0033 交接说明中已过时的指针（该卷封存不能改）\n- “charter 第 8 条”（不写协作者身份）现为根契约第 5 条。\n- 测试 88 个 → 90 个；命令见根契约第 5 节。\n- 其“协作方式”“机械要点”两部分仍然适用。\n\n四、仍未开始、待用户决定（与 T0033 交接第五部分相同）\n- iOS Demo 实现（object/）：先拆父任务与子任务再登记；开工前用户须准备 7 张封面、8 个头像。object/AGENTS.md 随第一个实现任务升级。\n- 发布前检查与推送：先决定早期任务记录中的旧称呼是否随仓库公开，并做一次密钥扫描。\n- 各图的待确认事项、服务等级、W1-1（V15）等暂缓项。\n\n五、候选教训（未经用户同意，尚未写入契约）\n- 含中文路径的 git 输出会被转义加引号，须加 `-c core.quotepath=false` 或用 `-z`：T0033 交接已记，本会话在 git ls-files 上又踩到一次。按“教训回写契约”可提议写进第 17 条，须用户同意。"}
+- #259｜close｜claude｜{"authority": {"basis": "当前对话 2026-09-30：用户指令“T38 通过”", "by": "用户"}, "expect": 258, "id": "T38"}
 
 ## 接手说明
 
