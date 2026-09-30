@@ -1,8 +1,8 @@
 # FESTIVA Demo 架构方案
 
-- 版本：0.12
+- 版本：0.13
 - 日期：2026-09-30
-- 状态：草稿。任务 [T0009](../../queue/tasks/T0009/task.md) 已通过验收，各章节尚未逐节确认（F1），见下方“章节状态”
+- 状态：第 1–15 节已逐节确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)），是 `object/` 中 iOS Demo 实现的基线；第 16 节列出仍待确认的事项。任务 [T0009](../../queue/tasks/T0009/task.md) 写成草稿并通过验收，见下方“章节状态”
 - 依据：经确认的 38 项裁决（任务 [T0003](../../queue/tasks/T0003/task.md)）；2026-09-29 决定 Demo 简化方案单独成文，`object/` 的实现以本文件为依据（任务 [T0009](../../queue/tasks/T0009/task.md)）
 - 相关文档：[项目目标](../goals.md)、[产品设计文档](../FESTIVA-产品设计文档.md)（字段与规则）、[工程架构文档](../FESTIVA-工程架构文档.md)（正式架构）、[高保真设计文档](../ui/FESTIVA-高保真设计文档.md)（界面与样例数据）
 
@@ -19,26 +19,26 @@
 
 | 章节 | 状态 |
 | --- | --- |
-| 1 目标与约束 | 草稿 |
-| 2 演示流程 | 草稿 |
-| 3 技术选型 | 草稿 |
-| 4 总体结构 | 草稿 |
-| 5 模块与目录 | 草稿 |
-| 6 页面范围 | 草稿 |
-| 7 本地数据 | 草稿 |
-| 8 演示账号与预置认证 | 草稿 |
-| 9 业务规则的实现 | 草稿 |
-| 10 AI 角色 | 草稿 |
-| 11 推荐排序 | 草稿 |
-| 12 简化项与正式架构对照 | 草稿 |
-| 13 开源要求 | 草稿 |
-| 14 录制视频准备 | 草稿 |
-| 15 明确不做的事 | 草稿 |
-| 16 待确认事项 | 草稿 |
+| 1 目标与约束 | 已确认（2026-09-30，T0028） |
+| 2 演示流程 | 已确认（2026-09-30，T0028） |
+| 3 技术选型 | 已确认（2026-09-30，T0028） |
+| 4 总体结构 | 已确认（2026-09-30，T0028） |
+| 5 模块与目录 | 已确认（2026-09-30，T0028） |
+| 6 页面范围 | 已确认（2026-09-30，T0028） |
+| 7 本地数据 | 已确认（2026-09-30，T0028） |
+| 8 演示账号与预置认证 | 已确认（2026-09-30，T0028） |
+| 9 业务规则的实现 | 已确认（2026-09-30，T0028） |
+| 10 AI 角色 | 已确认（2026-09-30，T0028） |
+| 11 推荐排序 | 已确认（2026-09-30，T0028） |
+| 12 简化项与正式架构对照 | 已确认（2026-09-30，T0028） |
+| 13 开源要求 | 已确认（2026-09-30，T0028） |
+| 14 录制视频准备 | 已确认（2026-09-30，T0028） |
+| 15 明确不做的事 | 已确认（2026-09-30，T0028） |
+| 16 待确认事项 | 待确认清单 |
 
 ## 1. 目标与约束
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 - Demo 用于拍摄演示视频、在 GitHub 开源、作为研究生产品设计申请的作品（项目目标）。
 - 真实跑通两条流程：“浏览 → 详情 → 申请 → 主办审批”和“创建活动”（A1）；三个 AI 角色都真实接入，每个角色一个核心工具（R4）。
@@ -52,7 +52,7 @@
 
 ## 2. 演示流程
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 视频脚本骨架。前提：已重置演示数据，演示时钟为 2027-01-20，位置来源为演示位置（见 7.3），当前账号为 Ciri Shi。数据见 UI 附录 A。
 
@@ -63,17 +63,17 @@
 | 3 | Patti 推荐 | Ciri Shi | 点 Patti 头像 → AI 服务使用说明 → 同意 → 说想参加中国新年派对、希望用中文交流、想吃中国菜 → 推荐卡 | 同意一次三个角色通用；偏好默认只影响排序；只推荐未结束的活动（W2-2、B4、S4-1） |
 | 4 | 详情与申请 | Ciri Shi | 点 P3 推荐卡 → 活动详情 → Send request → 结果提示 | 获批前只显示区域；主按钮变为“撤回申请”（C5、S9-1） |
 | 5 | 主办审批 | Freeman Wu | 设置 → 演示：切换账号 → Create → 铃铛 → 申请通知 → 通过 Ciri 的申请 | 申请人的公开资料含性别；处理后移到 Past（产品 7.4、W2-4） |
-| 6 | 申请结果 | Ciri Shi | 切回 Ciri → 铃铛 → 我的申请 → P3 详情 → 在地图中打开 | 获批后显示精确地址，跳转系统地图 App（C5、R1） |
+| 6 | 申请结果 | Ciri Shi | 切回 Ciri → Me → 我的申请 → P3 详情 → 在地图中打开 | 获批后显示精确地址，跳转系统地图 App（C5、R1） |
 | 7 | Conor 创建活动 | Ciri Shi | Create → Conor → 描述想办的聚会 → 草稿卡 → 预填的创建表单 → 上传封面 → Create → 活动管理 | AI 只给预填稿，“建议”字段有标记，点 Create 才发布（B3、S5-1） |
 | 8 | Lily 整理资料 | Ciri Shi | Me → Lily → 描述自己的社交风格 → 请 Lily 写入资料 → 资料摘要卡逐条勾选 → 确认 → 回 Me 查看 Personality | 逐条确认后才写入（B6） |
-| 9（可选） | 处理 P2 的申请 | Ciri Shi | Create → 铃铛（角标 4）→ 通过或拒绝 | 已满时不能通过（S7-1） |
+| 9（可选） | 处理 P2 的申请 | Ciri Shi | Create → 铃铛（角标 4）→ 通过或拒绝 | 处理后移到 Past，申请人收到结果通知（W2-4、C4） |
 
 - 场景 1–6 是“浏览 → 详情 → 申请 → 主办审批”，场景 7 是“创建活动”（A1）；场景 3、7、8 分别展示三个角色的核心工具（R4）。
 - P3 在种子数据中不预先加入，留给场景 4–6 现场演示（UI 附录 A）。
 
 ## 3. 技术选型
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 | 方面 | 选型 | 说明 |
 | --- | --- | --- |
@@ -82,21 +82,21 @@
 | 开发工具 | Xcode（支持 iOS 17 以上 SDK 的稳定版） | 普通 Xcode 工程，不使用项目生成工具 |
 | 本地数据 | SwiftData | 全部业务数据；图片文件存 App 沙盒 |
 | 地图与位置 | MapKit、Core Location | 地图显示、地址转坐标、“在地图中打开”跳转系统地图 App；地理编码使用所用 SDK 中未弃用的系统接口 |
-| 云端大模型 | Qwen API（暂定），用户自带密钥，App 经 HTTPS 直接调用 | 经 OpenAI 兼容接口接入；型号须支持工具调用与 JSON Schema 结构化输出（任务 [T0016](../../queue/tasks/T0016/task.md)）；适配器接口见 10.1 |
+| 云端大模型 | Qwen API（暂定），用户自带密钥，App 经 HTTPS 直接调用 | 经 OpenAI 兼容接口接入；型号须支持工具调用与 JSON Schema 结构化输出（任务 [T0016](../../queue/tasks/T0016/task.md)）；默认选其中速度快、成本低的一档（T0016 查阅时为 Flash 系列），设置中可以改型号，具体型号名在实现时按官方文档核对；适配器接口见 10.1 |
 | 密钥保存 | 系统钥匙串（Keychain） | 只存本机，不随 iCloud 同步 |
-| 图片选择 | PhotosUI（PhotosPicker） | 上传封面 |
+| 图片选择 | PhotosUI（PhotosPicker） | 上传封面与头像；选取后在手机上压缩为 JPEG 再保存，具体数值实现时确定（V13） |
 | 测试 | Xcode 自带测试框架 | 业务规则与推荐排序的单元测试 |
 
 ## 4. 总体结构
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 ```mermaid
 flowchart TB
   user["用户（演示者）<br/>[Person]"]
   subgraph phone["iPhone（单机）"]
     app["FESTIVA Demo App<br/>[Container: Swift / SwiftUI]<br/>界面、业务规则、AI 编排、推荐排序"]
-    store[("本地数据<br/>[SwiftData 与沙盒文件]<br/>用户、活动、申请、通知、图片")]
+    store[("本地数据<br/>[SwiftData 与沙盒文件]<br/>用户、活动、申请、通知、图片、对话记录")]
     keychain[("钥匙串<br/>[Keychain]<br/>用户自带的 LLM 密钥")]
   end
   llm["云端大模型服务<br/>[External System]<br/>Qwen API（暂定）"]
@@ -120,7 +120,7 @@ flowchart TB
 
 ## 5. 模块与目录
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 ```mermaid
 flowchart LR
@@ -129,19 +129,20 @@ flowchart LR
     features["Features<br/>Join、Create、Me、Chat、Onboarding"]
     ai["AI<br/>对话用例、角色、上下文、三个工具、LLMClient"]
     domain["Domain<br/>值类型、业务接口、规则函数、推荐排序"]
-    data["Data<br/>SwiftData 模型、LocalFestivaAPI"]
-    platform["Platform<br/>钥匙串、定位、地图、图片文件"]
+    data["Data<br/>SwiftData 模型、LocalFestivaAPI、图片文件"]
+    platform["Platform<br/>钥匙串、定位、地图、对话记录"]
     demo["Demo<br/>演示账号、时钟、位置、脚本、重置"]
   end
   appm --> features
   appm --> data
   appm --> demo
+  appm --> ai
+  appm --> platform
   features --> domain
   features --> ai
   ai --> domain
   data --> domain
   features --> platform
-  data --> platform
   ai --> platform
   demo --> data
   demo --> ai
@@ -167,7 +168,7 @@ flowchart LR
 边界规则：
 
 - Features 按 MVVM 组织（[iOS App C3](../architecture/festiva-c3-app/festiva-c3-app.md)）：每个板块一个目录，内分 Views 与 ViewModels；界面只渲染视图模型的状态、转交用户操作；视图模型只依赖本板块的业务子协议与模型层接口，不做业务判断——能否申请、是否已满、按钮显示什么，都以业务接口返回的结果为准（iOS App C3 的观察 O3）。Features 不直接读写 SwiftData 模型。
-- 业务接口按板块拆成子协议（登录、Join、Create、Me、对话），FestivaAPI 是它们的组合；第 9 节列出的方法按板块归入各子协议，由 LocalFestivaAPI 一并实现（iOS App C3 中 P5 的决定）。
+- 业务接口按板块拆成子协议（Join、Create、Me、对话），FestivaAPI 是它们的组合，由 LocalFestivaAPI 一并实现，写法见第 9 节（iOS App C3 中 P5 的决定）。登录的子协议 Demo 用不上（由切换演示账号代替），在实现正式版时补上。
 - AI 只拿到只读接口 FestivaReadAPI，类型上无法调用写入方法；写入只由界面在用户确认后调用（B1）。
 - AI 模块按 [AI 编排服务 C3](../architecture/festiva-c3-ai/festiva-c3-ai.md) 组织：AIOrchestrator 只编排读取、模型调用与工具调用，不做判断；同意与上下文范围在 SharedContext，参数校验与卡片内容在三个工具中（AI 编排服务 C3 的观察 O4）。原来的 OutputGuard 拆进三个工具（T0020 中用户的决定）。
 - 业务规则只写在 Domain 的五组纯规则中，由 LocalFestivaAPI 调用；LocalFestivaAPI 只做读取、调用规则、一次保存，不做业务判断（[API 服务 C3](../architecture/festiva-c3-api/festiva-c3-api.md)的观察 O2）；界面只负责显示和收集输入。这与正式架构中“API 服务是业务规则的唯一执行者”一致。
@@ -208,7 +209,7 @@ object/
 
 ## 6. 页面范围
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 页面清单见产品 2.2 与第 9 节，界面见高保真设计文档。
 
@@ -218,14 +219,14 @@ object/
 | Patti、Conor、Lily 对话 | 完整；没有密钥时为演示脚本（10.5） |
 | Create 首页、创建活动表单、申请通知、活动管理（编辑、取消） | 完整 |
 | Me 首页、我的申请、收藏的活动、参加过的活动 | 完整 |
-| 资料编辑 | 完整，含修改性别前的影响提示（U4） |
-| 设置 | 完整，另加演示专用项：AI 服务与密钥、演示账号、演示时钟、位置来源、重置演示数据 |
+| 资料编辑 | 完整，含修改性别前的影响提示（U4、T0027） |
+| 设置 | 完整：AI 服务使用说明与同意状态（产品 9.8）；产品中的“退出登录”由“演示：切换账号”代替；另加演示专用项：AI 服务与密钥、演示时钟、位置来源、重置演示数据 |
 | 分享活动摘要、分享个人主页 | 系统分享面板（W2-7、W2-8） |
 | 注册与登录 | 简化：由“选择演示账号”代替（第 8 节） |
 
 ## 7. 本地数据
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 ### 7.1 数据模型
 
@@ -262,7 +263,7 @@ object/
 8. **Ciri Shi 的资料**：Language 填中文与 English，Food Allergy 填“无”；Personality、Culture & Religion 留空，留给场景 8 由 Lily 写入。
 9. **通知**：Ciri Shi 有 4 条未读的新申请通知，对应 P2 的 4 条申请（附录 A 与图 281 的角标 4）。
 10. **收藏**：Ciri Shi 收藏 P4，用于展示“收藏的活动”。
-11. **图片**：封面图与头像放在 `Resources/Seed/`，要求见第 13 节。
+11. **图片**：封面图与头像由维护者从自己的手机相册选取（项目自有照片），放在 `Resources/Seed/`，要求见第 13 节。
 
 ### 7.3 演示时钟与演示位置（Demo 专用）
 
@@ -271,7 +272,7 @@ object/
 
 ## 8. 演示账号与预置认证
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 - 首次启动直接以 Ciri Shi（UI 附录 A 的演示账号）进入 Join 首页。
 - 设置 → “演示：切换账号”列出附录 A 中的 8 个用户，点选即切换，各板块随之刷新。界面上保留“演示”字样，不把切换账号当作产品功能。
@@ -280,50 +281,67 @@ object/
 
 ## 9. 业务规则的实现
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
-业务接口放在 Domain，Demo 中由 Data 模块的 LocalFestivaAPI 实现。方法都是 `async throws`，以后换成网络实现时，调用方式不变。
+业务接口放在 Domain，按板块拆成子接口（第 5 节），Demo 中由 Data 模块的 LocalFestivaAPI 一并实现。方法都是 `async throws`，以后换成网络实现时，调用方式不变。
 
 ```swift
-/// 只读部分：AI 角色只拿到这一部分
+/// 只读部分：AI 角色只拿到这一部分（AI 编排服务 C3 的只读接口）
 protocol FestivaReadAPI {
     func currentUser() async throws -> UserProfile
+    func aiConsent() async throws -> AIConsentStatus              // 同意状态，AI 每轮先查（10.1）
     func catalog() async throws -> Catalog                        // 节日与标签列表
     func recommend(_ query: PartyQuery) async throws -> [RankedParty]
     func party(_ id: PartyID) async throws -> PartyDetail         // 按查看者过滤字段
     func myParties() async throws -> MyParties                    // 主办的、申请的、参加过的、收藏的
 }
 
-/// 完整业务接口：只由界面在用户操作或确认后调用
-protocol FestivaAPI: FestivaReadAPI {
-    func createParty(_ input: PartyInput) async throws -> PartyDetail
-    func updateParty(_ id: PartyID, _ input: PartyInput) async throws -> PartyDetail
-    func cancelParty(_ id: PartyID) async throws
+/// 以下按板块拆分，每个视图模型只依赖本板块的子接口（iOS App C3 边 7）
+protocol JoinAPI: FestivaReadAPI {
     func apply(to party: PartyID, shareFoodAllergy: Bool) async throws -> MembershipStatus
     func withdraw(from party: PartyID) async throws
     func leave(_ party: PartyID) async throws
+    func setFavorite(_ party: PartyID, _ isFavorite: Bool) async throws
+}
+
+protocol CreateAPI: FestivaReadAPI {
+    func createParty(_ input: PartyInput) async throws -> PartyDetail
+    func updateParty(_ id: PartyID, _ input: PartyInput) async throws -> PartyDetail
+    func cancelParty(_ id: PartyID) async throws
     func applications(for party: PartyID) async throws -> [ApplicationItem]
     func decide(_ application: MembershipID, approve: Bool) async throws
-    func updateProfile(_ change: ProfileChange) async throws -> UserProfile
-    func genderChangeImpact(to gender: Gender) async throws -> [PartySummary]
-    func setFavorite(_ party: PartyID, _ isFavorite: Bool) async throws
     func notifications() async throws -> [NotificationItem]
     func markRead(_ ids: [NotificationID]) async throws
-    func recordAIConsent(version: String) async throws
 }
+
+protocol MeAPI: FestivaReadAPI {
+    func updateProfile(_ change: ProfileChange) async throws -> UserProfile
+    func genderChangeImpact(to gender: Gender) async throws -> [PartySummary]
+    func withdraw(from party: PartyID) async throws               // 在“我的申请”中撤回
+    func leave(_ party: PartyID) async throws                     // 在“我的申请”中退出
+    func setFavorite(_ party: PartyID, _ isFavorite: Bool) async throws
+}
+
+protocol ChatAPI: FestivaReadAPI {
+    func recordAIConsent(version: String) async throws
+    func updateProfile(_ change: ProfileChange) async throws -> UserProfile   // Lily 摘要卡确认后写入
+}
+
+/// 完整业务接口：各板块子接口的组合，Demo 中由 LocalFestivaAPI 一并实现
+typealias FestivaAPI = JoinAPI & CreateAPI & MeAPI & ChatAPI
 ```
 
 实现要点：
 
 - **一次操作一次保存**：每个写入方法在同一个 ModelContext 中完成全部检查和修改后保存一次；任何检查失败就回滚，不留下半完成的状态。这对应工程 8 中“同一个数据库事务”的要求，包括名额检查和修改性别时的连带处理。
-- **规则来源**：申请、审批与名额按产品第 7 节（C4、S7-1、S7-2）；“参加者性别”的资格与隐藏按产品 7.2（C3、U2）；修改性别时两个方向的连带处理按产品 7.2（U4、T0027），修改前用 `genderChangeImpact` 取得受影响的活动并提示用户；取消与修改活动时的通知按产品 7.2 与第 9 节。
+- **规则来源**：申请、审批与名额按产品第 7 节（C4、S7-1、S7-2）；“参加者性别”的资格与隐藏按产品 7.2（C3、U2）；修改性别时两个方向的连带处理按产品 7.2（U4、T0027），修改前用 `genderChangeImpact` 取得受影响的活动并提示用户；取消与修改活动时的通知按产品 7.2 与第 9 节；人数上限不能改到低于已加入人数（产品 5.1，V1）；活动取消后申请冻结（产品 7.2，V2）；活动须有坐标，地址转坐标由界面经地图适配器完成，失败不能提交（产品 5.4，V5）。
 - **可见范围**：LocalFestivaAPI 按查看者返回字段。精确地址和坐标只给主办人和已加入的成员（C5）；私有资料只给本人；饮食过敏只在申请人选择分享时给该活动的主办人（产品 6.3、C9）。Demo 虽然在本机，也不把这些字段交给界面，以保持与正式架构一致。
 - **通知**：写入 NotificationRecord，铃铛角标为未读数；没有推送。事件按工程 9，另加产品 7.2 中 U4 给主办人的通知。
 - **错误**：规则拒绝时返回明确的错误类型（例如已满、不符合参加条件、活动已结束），界面按产品 9.3、9.9 显示原因和下一步。
 
 ## 10. AI 角色
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 ### 10.1 编排流程
 
@@ -382,7 +400,7 @@ AIOrchestrator 在 App 内完成 [AI 编排服务 C3](../architecture/festiva-c3
 
 ## 11. 推荐排序
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 排序在 Domain 的 RankingEngine 中完成，是不访问存储的纯函数，由 LocalFestivaAPI.recommend 调用。Join 首页推荐、搜索、筛选和 Patti 共用这一套（工程 6、D3）。
 
@@ -398,7 +416,7 @@ AIOrchestrator 在 App 内完成 [AI 编排服务 C3](../architecture/festiva-c3
 
 ## 12. 简化项与正式架构对照
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 API 服务、iOS App、AI 编排服务的组件名称取自各自的 C3 组件图（任务 [T0018](../../queue/tasks/T0018/task.md)、[T0019](../../queue/tasks/T0019/task.md)、[T0020](../../queue/tasks/T0020/task.md)），容器与外部系统的名称沿用工程架构文档第 1 节。表中每一项都是 Demo 专用。
 
@@ -422,18 +440,18 @@ API 服务、iOS App、AI 编排服务的组件名称取自各自的 C3 组件�
 
 ## 13. 开源要求
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 - **仓库不含任何密钥**：密钥只在运行时由用户输入并存入钥匙串；代码、种子、脚本、提示词、工程配置和截图都不含密钥。`.gitignore` 排除 `xcuserdata/`、`DerivedData/` 等本机文件。实现任务的验收应包含一次提交前的密钥扫描，结果记入任务回执。
 - **没有密钥也能运行**：直接运行即进入演示脚本模式，全部页面可用，AI 对话按脚本进行（10.5）。
 - **不含真实个人信息**：种子中的人名、学校和数值是样例（UI 附录 A）；邮箱使用 `.example` 域名；地址为公共场所或虚构门牌。
-- **图片可以再分发**：种子中的封面图和头像须为项目自有或许可允许再分发的图片，在 README 中注明来源。
+- **图片可以再分发**：种子中的封面图和头像由维护者从自己的手机相册选取，属于项目自有照片（T0028 中用户的决定）；头像不使用可辨认的真人照片，除非本人同意；README 注明图片为项目自有。
 - **clone 后运行**：在 macOS 上用 Xcode 打开 `object/FESTIVA.xcodeproj`，选择 FESTIVA scheme 和 iPhone 模拟器后运行；模拟器不需要签名。真机运行时在 Signing 中选择自己的开发团队，并把 Bundle ID 从仓库中的占位值改为自己的。
 - **object/README.md 应包含**：一句话介绍与 Demo 视频链接；Demo 范围（两条流程、三个角色）和不做的事；运行步骤；AI 密钥的设置方法，以及对话数据会发送给哪家供应商；演示脚本模式；演示选项（切换账号、演示时钟、位置来源、重置数据）；架构说明的链接（本文件、工程架构文档、产品设计文档）；许可证沿用仓库根目录的 LICENSE。
 
 ## 14. 录制视频准备
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 - **设备**：iPhone 17 模拟器（与高保真图同尺寸）或真机；界面语言英文，浅色模式，默认字号。
 - **状态栏**：`xcrun simctl status_bar booted override --time 9:41 --batteryState charged --batteryLevel 100`。
@@ -446,7 +464,7 @@ API 服务、iOS App、AI 编排服务的组件名称取自各自的 C3 组件�
 
 ## 15. 明确不做的事
 
-> 状态：草稿
+> 状态：已确认（2026-09-30，任务 [T0028](../../queue/tasks/T0028/task.md)）
 
 - 服务端、数据库服务器、云函数，以及多设备同步。
 - 学校邮箱验证码与注册（第 8 节）。
@@ -454,11 +472,13 @@ API 服务、iOS App、AI 编排服务的组件名称取自各自的 C3 组件�
 - 导航与通勤时间（D2 备注、R1）。
 - 日程、文化提示、推荐反馈、举报与拉黑、人与人匹配（产品第 10 节，A4、B7）。
 - 节日与标签列表的维护界面。
+- 注销账号：Demo 没有真实账号；正式版上架前须补上（产品第 10 节，V14）。
+- 手动清空对话记录：由“重置演示数据”代替（V12）。
 - 界面多语言：界面按高保真图使用英文。
 
 ## 16. 待确认事项
 
-> 状态：草稿
+> 状态：待确认清单
 
 - 【待确认】角色头像按钮的样式与角色名（W1-1）。任务 [T0025](../../queue/tasks/T0025/task.md) 复查后继续暂缓（V15）；Demo 暂按现有截图实现。
 
@@ -511,9 +531,15 @@ API 服务、iOS App、AI 编排服务的组件名称取自各自的 C3 组件�
 | W2-6 | 2 |
 | W2-7、W2-8 | 6 |
 | WA | 7.2 |
+| V1 | 9 |
+| V2 | 9 |
 | V3 | 7.2 |
 | V4 | 7.2 |
+| V5 | 9 |
 | V8 | 10.6 |
+| V12 | 15 |
+| V13 | 3 |
+| V14 | 15 |
 | V15 | 16 |
 
 本文件负责落实的裁决为 A1、A2、B1、B3、B6、C1、D1、D3、R4、R6；其余编号是在实现中引用的产品规则与界面要求。F1–F3 为定稿流程，由任务 T0003 执行。
