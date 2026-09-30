@@ -225,4 +225,35 @@ class StateQueue(unittest.TestCase):
         p=run([sys.executable,'-B',str(self.r.root/'tool/shell.py'),'--help'],self.r.repo)
         self.assertIn('task register',p.stdout); self.assertIn('state get',p.stdout)
 
+    def stale_versions(self):
+        # Every fixture write fetches a pack first, so each create leaves one version behind.
+        for _ in range(4): self.r.create()
+        base=self.r.root/'.shell/local/state'
+        dirs=sorted((d for d in base.iterdir() if not d.is_symlink() and d.name!='notes'),key=lambda d:d.name)
+        for i,d in enumerate(dirs): os.utime(d/'manifest.json',(1000+i,1000+i))
+        return base,dirs
+
+    def test_25_get_keeps_current_sizes_and_two_newest_stale_versions(self):
+        base,dirs=self.stale_versions()
+        self.assertEqual(len(dirs),3)  # pruning during the creates already bounded growth
+        pack=self.get();small=self.get(size=7)
+        self.assertEqual(pack['pruned'],1);self.assertEqual(small['pruned'],0)
+        self.assertEqual({d.name for d in base.iterdir()},{dirs[1].name,dirs[2].name,pack['context'],small['context']})
+        for p in (pack,small): self.r.call('state','check','--context',p['context'])
+
+    @unittest.skipIf(os.name=='nt' or os.geteuid()==0,'needs POSIX permissions as a normal user')
+    def test_26_pruning_skips_foreign_entries_and_never_blocks_delivery(self):
+        base=self.r.root/'.shell/local/state';self.get()
+        outside=Path(self.tmp.name)/'outside';outside.mkdir();(outside/'keep.txt').write_text('x')
+        link=base/('f'*64+'-24000');link.symlink_to(outside,target_is_directory=True)
+        notes=base/'notes';notes.mkdir();(notes/'n.txt').write_text('mine')
+        for p in (outside,notes): os.utime(p,(1,1))  # oldest: would be pruned first if not skipped
+        base,dirs=self.stale_versions()
+        stuck=dirs[0]/'content';stuck.chmod(0o500);self.addCleanup(stuck.chmod,0o700)
+        pack=self.get()
+        self.assertEqual(pack['pruned'],0);self.assertTrue(stuck.exists())
+        self.assertTrue(link.is_symlink());self.assertTrue((outside/'keep.txt').exists())
+        self.assertTrue((notes/'n.txt').exists())
+        self.r.call('state','check','--context',pack['context'])
+
 if __name__ == '__main__': unittest.main()
