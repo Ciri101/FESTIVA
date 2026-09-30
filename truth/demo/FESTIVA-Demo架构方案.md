@@ -1,6 +1,6 @@
 # FESTIVA Demo 架构方案
 
-- 版本：0.6
+- 版本：0.7
 - 日期：2026-09-29
 - 状态：草稿。任务 [T0009](../../queue/tasks/T0009/task.md) 已通过验收，各章节尚未逐节确认（F1），见下方“章节状态”
 - 依据：经确认的 38 项裁决（任务 [T0003](../../queue/tasks/T0003/task.md)）；2026-09-29 决定 Demo 简化方案单独成文，`object/` 的实现以本文件为依据（任务 [T0009](../../queue/tasks/T0009/task.md)）
@@ -127,7 +127,7 @@ flowchart LR
   subgraph app["FESTIVA Demo App"]
     appm["App<br/>入口与依赖装配"]
     features["Features<br/>Join、Create、Me、Chat、Onboarding"]
-    ai["AI<br/>编排、角色、工具、输出校验、LLMClient"]
+    ai["AI<br/>对话用例、角色、上下文、三个工具、LLMClient"]
     domain["Domain<br/>值类型、业务接口、规则函数、推荐排序"]
     data["Data<br/>SwiftData 模型、LocalFestivaAPI"]
     platform["Platform<br/>钥匙串、定位、地图、图片文件"]
@@ -160,7 +160,7 @@ flowchart LR
 | Features/Common | 活动卡、理由标签、提示条、空状态等共用组件 | 否 | iOS App C3：界面层的共用部分 |
 | Domain | 值类型；业务接口 FestivaAPI 与只读子集 FestivaReadAPI；按 API 服务 C3 划分的五组纯规则：活动目录、申请账本、用户档案、推荐排序（RankingEngine）、通知箱；业务接口按板块拆成子协议，FestivaAPI 是它们的组合 | 接口不是；规则在 Demo 中代替服务端执行，将来与服务端共用 | API 服务 C3 的五个规则组件；业务接口由其业务用例定义 |
 | Data | SwiftData 模型与存取；LocalFestivaAPI（在本机实现业务接口）；图片文件存取 | 是 | API 服务 C3 的业务用例（LocalFestivaAPI）、数据库适配器（SwiftData 存取）、图片上传签名器（图片文件存取）；另代替数据库与文件存储 |
-| AI | AIOrchestrator、三个角色的定义、工具、输出校验、LLMClient 与供应商适配器 | 在 App 内运行是 Demo 简化 | AI 编排服务 |
+| AI | AIOrchestrator、RoleCatalog 与提示词、SharedContext、三个工具（PartySearch、PartyDraft、ProfileSummary，各自校验参数、生成卡片）、LLMClient 与 Qwen 适配器 | 在 App 内运行是 Demo 简化 | AI 编排服务 C3：对话用例（AIOrchestrator）、角色目录、共享上下文、活动搜索、活动草稿、资料摘要、大模型适配器；对话接口适配器与只读接口客户端在 Demo 中不存在：界面直接调用 AIOrchestrator，FestivaReadAPI 由 LocalFestivaAPI 直接提供 |
 | Platform | 钥匙串、定位、地理编码、打开地图 App | 否 | iOS App C3：定位适配器、地图适配器；钥匙串在 Demo 中保存用户自带的 LLM 密钥 |
 | Demo | 演示账号切换、演示时钟、演示位置、演示脚本客户端、种子导入与重置 | 是 | 无，见第 12 节 |
 
@@ -169,6 +169,7 @@ flowchart LR
 - Features 按 MVVM 组织（[iOS App C3](../architecture/festiva-c3-app/festiva-c3-app.md)）：每个板块一个目录，内分 Views 与 ViewModels；界面只渲染视图模型的状态、转交用户操作；视图模型只依赖本板块的业务子协议与模型层接口，不做业务判断——能否申请、是否已满、按钮显示什么，都以业务接口返回的结果为准（iOS App C3 的观察 O3）。Features 不直接读写 SwiftData 模型。
 - 业务接口按板块拆成子协议（登录、Join、Create、Me、对话），FestivaAPI 是它们的组合；第 9 节列出的方法按板块归入各子协议，由 LocalFestivaAPI 一并实现（iOS App C3 中 P5 的决定）。
 - AI 只拿到只读接口 FestivaReadAPI，类型上无法调用写入方法；写入只由界面在用户确认后调用（B1）。
+- AI 模块按 [AI 编排服务 C3](../architecture/festiva-c3-ai/festiva-c3-ai.md) 组织：AIOrchestrator 只编排读取、模型调用与工具调用，不做判断；同意与上下文范围在 SharedContext，参数校验与卡片内容在三个工具中（AI 编排服务 C3 的观察 O4）。原来的 OutputGuard 拆进三个工具（T0020 中用户的决定）。
 - 业务规则只写在 Domain 的五组纯规则中，由 LocalFestivaAPI 调用；LocalFestivaAPI 只做读取、调用规则、一次保存，不做业务判断（[API 服务 C3](../architecture/festiva-c3-api/festiva-c3-api.md)的观察 O2）；界面只负责显示和收集输入。这与正式架构中“API 服务是业务规则的唯一执行者”一致。
 - 换成服务端时，只需新增一个通过网络调用 API 服务的 FestivaAPI 实现，并在 App 装配处替换；Data 与 Demo 模块随之移除。
 
@@ -194,7 +195,7 @@ object/
       RecommendationRanking/ # 推荐排序：RankingEngine
       NotificationInbox/     # 通知箱：事件的接收人
     Data/                    # LocalFestivaAPI（业务用例）、SwiftData 模型与存取、图片文件
-    AI/                      # AIOrchestrator、Roles、Tools、OutputGuard、LLMClient 与适配器
+    AI/                      # AIOrchestrator、RoleCatalog、SharedContext、Tools（三个工具）、LLMClient 与 Qwen 适配器
     Platform/                # Keychain、Location（定位适配器）、Geocoding 与 MapsLauncher（地图适配器）
     Demo/                    # DemoSession、DemoClock、DemoLocation、ScriptedLLMClient、SeedImporter
     Resources/
@@ -202,7 +203,7 @@ object/
       Prompts/               # 三个角色的提示词
       DemoScripts/           # 没有密钥时的演示脚本
       Assets.xcassets
-  FESTIVATests/              # 规则函数、LocalFestivaAPI、RankingEngine、OutputGuard 的测试
+  FESTIVATests/              # 规则函数、LocalFestivaAPI、RankingEngine、SharedContext 与三个工具的测试
 ```
 
 ## 6. 页面范围
@@ -325,21 +326,22 @@ protocol FestivaAPI: FestivaReadAPI {
 
 ### 10.1 编排流程
 
-AIOrchestrator 在 App 内完成工程 5.1 中 AI 编排服务的工作：
+AIOrchestrator 在 App 内完成 [AI 编排服务 C3](../architecture/festiva-c3-ai/festiva-c3-ai.md) 中对话用例的工作，其余组件的对应见第 5 节：
 
-1. 对话页把用户消息和当前角色交给 AIOrchestrator。
-2. 上下文装配：经 FestivaReadAPI 读取用户已确认的资料字段和用户创建或参加的活动摘要，不读取其他角色的对话（B2）；加入演示时钟给出的“今天”。
-3. 调用 LLMClient：角色提示词（`Resources/Prompts/`）、对话记录、该角色的一个工具。
-4. 模型返回工具调用时，先经输出校验检查参数，再执行工具（10.2），把结果交回模型。每轮对话最多两次工具调用。
-5. 模型给出回复；若工具产生了结构化结果，对话页同时显示确认卡片（10.3）。
+1. 对话页把当前角色、本角色的对话记录和新消息交给 AIOrchestrator。
+2. 经 FestivaReadAPI 读取同意状态、用户已确认的资料字段和用户创建或参加的活动摘要；SharedContext 决定本轮可以发给模型的内容：没有同意即拒绝，不含其他角色的对话（B2、C9）；加入演示时钟给出的“今天”。
+3. 调用 LLMClient：RoleCatalog 给出的角色提示词（`Resources/Prompts/`）与该角色的一个工具，以及对话记录。
+4. 模型返回工具调用时，交给该角色的工具校验参数、生成卡片（10.2），把结果交回模型。
+5. 模型给出回复；若工具产生了卡片，对话页同时显示确认卡片（10.3）。
 
 - LLMClient 接口与供应商无关：请求包含系统提示词、消息和工具定义（名称、说明、JSON Schema），响应包含文本和工具调用。每个供应商一个适配器；结构化结果通过工具参数的 JSON Schema 取得，所以供应商须支持工具调用与结构化输出（项目目标）。
+- 回复时间以“在与使用场景相称的时间内，给出合理的回复与有效的卡片”为目标。每轮工具调用次数上限与等待超时只是防止失控的保护措施，不是规则；Demo 的初始取值为 2 次、30 秒，按所用型号实测调整（T0020 中用户的决定）。
 - Demo 不要求流式返回，回复完整后再显示。
-- 对话记录只保存在内存中，按角色分开，退出 App 即清空；不写入本地数据。
+- 对话记录按账号与角色保存在本机，退出 App 后仍在；它不属于业务数据，不经业务接口，也不上传服务端（T0020 中用户的决定）。存取方式随 iOS App C3 的增补确定（任务 [T0022](../../queue/tasks/T0022/task.md)）。
 
 ### 10.2 三个工具
 
-每个角色只有一个核心工具（R4）。
+每个角色只有一个核心工具（R4）。每个工具对应 AI 编排服务 C3 的一个组件：`search_parties` 为活动搜索（PartySearch），`prefill_party_form` 为活动草稿（PartyDraft），`summarize_profile` 为资料摘要（ProfileSummary）；参数校验与卡片的生成都在工具内。
 
 | 角色 | 工具 | 输入 | 执行与校验 | 结果 |
 | --- | --- | --- | --- | --- |
@@ -374,8 +376,8 @@ AIOrchestrator 在 App 内完成工程 5.1 中 AI 编排服务的工作：
 
 ### 10.6 失败处理
 
-- 网络错误、密钥无效或超过 30 秒没有响应时，对话页显示“AI 暂不可用”提示条，其他功能照常（S3-1）；提示条提供“改用演示脚本”。
-- 输出校验不通过时丢弃该结果，不显示卡片，角色回复“没能生成可用的结果，请换个说法”。
+- 网络错误、密钥无效，或保护措施触发（工具调用次数或等待时间达到上限，初始取值见 10.1）时，对话页显示“AI 暂不可用”提示条，其他功能照常（S3-1）；提示条提供“改用演示脚本”。
+- 工具的参数校验不通过时不生成卡片，角色回复“没能生成可用的结果，请换个说法”。
 
 ## 11. 推荐排序
 
@@ -397,23 +399,22 @@ AIOrchestrator 在 App 内完成工程 5.1 中 AI 编排服务的工作：
 
 > 状态：草稿
 
-API 服务与 iOS App 的组件名称取自各自的 C3 组件图（任务 [T0018](../../queue/tasks/T0018/task.md)、[T0019](../../queue/tasks/T0019/task.md)），其余沿用工程架构文档第 4 节的名称。表中每一项都是 Demo 专用。
+API 服务、iOS App、AI 编排服务的组件名称取自各自的 C3 组件图（任务 [T0018](../../queue/tasks/T0018/task.md)、[T0019](../../queue/tasks/T0019/task.md)、[T0020](../../queue/tasks/T0020/task.md)），容器与外部系统的名称沿用工程架构文档第 1 节。表中每一项都是 Demo 专用。
 
 | Demo 简化 | 正式架构组件 | 正式做法 | 依据 |
 | --- | --- | --- | --- |
 | SwiftData 本地数据，一台设备上多个账号共用 | 数据库；API 服务：数据库适配器 | PostgreSQL，只经 API 服务读写（工程 3、7） | R6 |
 | 业务规则由 App 内的 LocalFestivaAPI 执行 | API 服务：业务用例、活动目录、申请账本、用户档案 | 服务端执行，App 经业务接口客户端调用（工程 3、4.2） | R6 |
 | 推荐排序在 App 内完成 | API 服务：推荐排序 | 服务端过滤与排序（工程 6） | D3、R6 |
-| AI 编排在 App 内，App 直接调用云端大模型 | AI 编排服务：会话入口、角色定义、上下文装配、工具执行、输出校验 | 服务端编排，App 不连 LLM（工程 4.3、5） | D1、R6 |
-| 用户自带密钥，存本机钥匙串 | AI 编排服务 | 密钥只保存在服务端配置中（工程 12） | D1、R6 |
-| 没有密钥时使用演示脚本 | 云端大模型服务 | 始终调用模型，不可用时提示（工程 13） | R6 |
-| 对话不流式返回 | AI 编排服务：会话入口 | 流式返回（工程 4.3） | — |
-| 对话记录只在内存中 | AI 编排服务 | 是否保存待确认（工程 5.3、15） | B2 |
+| AI 编排在 App 内，App 直接调用云端大模型 | AI 编排服务：对话接口适配器、对话用例、角色目录、共享上下文、活动搜索、活动草稿、资料摘要、大模型适配器、只读接口客户端 | 服务端编排，App 经对话客户端调用，不连 LLM（工程 4.3、5） | D1、R6 |
+| 用户自带密钥，存本机钥匙串 | AI 编排服务：大模型适配器 | 密钥只保存在服务端配置中（工程 12） | D1、R6 |
+| 没有密钥时使用演示脚本 | AI 编排服务：大模型适配器；云端大模型服务 | 始终调用模型，不可用时提示（工程 13） | R6 |
+| 对话不流式返回 | AI 编排服务：对话接口适配器 | 流式返回（工程 4.3） | — |
 | 预置认证，切换演示账号 | API 服务：用户档案、会话签发器、邮件适配器；邮件发送服务 | 学校邮箱验证码注册登录（工程 10） | C1 |
 | 学校直接写入种子 | API 服务：用户档案 | 由邮箱域名确定（工程 10） | S6-1 |
 | 只有站内通知，没有推送 | API 服务：通知箱、推送通知适配器；Apple 推送通知服务 | 站内通知加 APNs 推送（工程 9） | — |
 | 图片存安装包和 App 沙盒 | 文件存储；API 服务：图片上传签名器 | 对象存储，签名地址上传（工程 3） | — |
-| 同意记录存本机 | API 服务：用户档案（AI 同意记录） | 服务端记录，没有同意时 AI 编排服务拒绝请求（工程 5.3） | C9 |
+| 同意记录存本机 | API 服务：用户档案（AI 同意记录）；AI 编排服务：共享上下文 | 服务端记录，没有同意时 AI 编排服务的共享上下文拒绝请求（工程 5.3） | C9 |
 | 演示时钟 | API 服务：业务用例（当前时间由它传入规则） | 以服务端当前时间判断活动状态（工程 8） | — |
 | 演示位置 | iOS App：定位适配器 | 当前定位或手动选择的位置（工程 11） | — |
 | 性格与氛围偏好只经 Patti 参与排序 | API 服务：推荐排序 | 已确认的资料直接参与软偏好排序（工程 6） | S4-4 |

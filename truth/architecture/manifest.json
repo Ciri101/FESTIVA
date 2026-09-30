@@ -14,5 +14,9 @@
   "festiva-c3-app/festiva-c3-app.svg": {
     "doc": "architecture/festiva-c3-app/festiva-c3-app.mmd",
     "hash": "8a2899536ad888cc"
+  },
+  "festiva-c3-ai/festiva-c3-ai.svg": {
+    "doc": "architecture/festiva-c3-ai/festiva-c3-ai.mmd",
+    "hash": "0056ab9e01161426"
   }
 }
