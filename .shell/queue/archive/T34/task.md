@@ -1,14 +1,15 @@
 # 根契约补充协作纪律
 
+> 已取消并移出队列。此件仅为历史记录，不具有当前任务状态。
+
 ```json
 {
   "id": "T34",
-  "revision": 241,
-  "assignee": "claude",
+  "revision": 242,
+  "assignee": null,
   "parent": null,
   "deps": [],
-  "round": 2,
-  "status": "交付"
+  "round": 2
 }
 ```
 
@@ -40,6 +41,7 @@
 - #239｜approve｜claude｜{"authority": {"basis": "当前对话 2026-09-30：用户指正“根契约文档是仓库根目录的 AGENTS.md”，纪律改写到该文件", "by": "用户"}, "expect": 238, "id": "T34"}
 - #240｜claim｜claude｜{"expect": 239, "id": "T34"}
 - #241｜deliver｜claude｜{"artifacts": [{"path": "AGENTS.md", "sha256": "a3200a5a74a81733b854226e24ead2213504b85efb8e95d792c8058f072dd580"}], "expect": 240, "id": "T34", "receipt": "# T34 交付回执：根契约补充协作纪律\n\n- 执行：claude，2026-09-30\n- 自检结论：passed。未独立验证。\n\n## 写入\n\n根目录 AGENTS.md 在“执行与收尾”与结尾的使用者说明之间，新增“协作纪律”一节，内容为用户给出的纪律，末尾链接本任务作为依据。\n\n与原文的差异：\n- 删去第一句“汇报语言纪律见本表「两个世界，两套规矩」行”，因为本仓没有这一行。\n- 引号改用本仓的“”写法。\n- 命令与变量名加代码格式，粗体保留原文的两处强调。\n\n## 过程\n\nAgent 起初把纪律写进 charter/AGENTS.md 第 9 条。用户指正根契约是根目录 AGENTS.md 后，撤回该修改（未提交），并按手续改了目标：撤回 #237、修订 #238、重新批准 #239、领取 #240。\n\n## 验收标准逐条\n\n| 编号 | 结果 | 证据 |\n|---|---|---|\n| A1 | 满足 | 根目录 AGENTS.md“协作纪律”一节：除删去的第一句外，内容与原文一致；末尾链接 queue/tasks/T34/task.md |\n| A2 | 满足 | `git diff --stat` 只改 AGENTS.md（4 行新增），charter/AGENTS.md 无改动；AGENTS.md 中 9 个相对链接无断链 |\n\n## 未验证\n\n没有独立审阅者核对；本地提交未推送。\n", "summary": "根目录 AGENTS.md 新增“协作纪律”一节（删去本仓不存在的引用句）", "verification": "passed"}
+- #242｜cancel｜claude｜{"authority": {"basis": "当前对话 2026-09-30：用户选择“取消 T34，并入升级任务”，协作纪律由根契约升级任务一并交付", "by": "用户"}, "expect": 241, "expect_seq": null, "id": "T34", "tree": false}
 
 ## 接手说明
 
