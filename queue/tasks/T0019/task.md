@@ -3,14 +3,14 @@
 ```json
 {
   "id": "T0019",
-  "revision": 137,
-  "assignee": null,
+  "revision": 138,
+  "assignee": "claude",
   "parent": null,
   "deps": [
     "T0018"
   ],
   "round": 1,
-  "status": "批准"
+  "status": "领取"
 }
 ```
 
@@ -37,6 +37,7 @@
 - #135｜approve｜claude｜{"authority": {"basis": "当前对话 2026-09-29：用户批准 T0019，并指示下一个 Session 推进", "by": "用户"}, "expect": 127, "id": "T0019"}
 - #136｜claim｜claude｜{"expect": 135, "id": "T0019"}
 - #137｜release｜claude｜{"expect": 136, "id": "T0019", "text": "交接说明（2026-09-29，claude，Session 收尾。用户指示“收尾交接，下一个 Session 推进 T0019”，随后验收通过 T0018、批准 T0019。本任务尚未开始施工，只为留说明而领取后释放；下一个 Session 正式推进）\n\n一、本 Session 的结果（全部提交在本地 main，未推送；origin 为公开仓库，本地 main 领先 origin 五十余个提交）\n- 通过：T0013（C1、C2 定稿）、T0015（另一会话完成，本会话按用户指示记验收）、T0017（图纸区细则现状更正）、T0016（技术选型：大模型暂定 Qwen API；服务端为 Swift、容器部署、托管 PostgreSQL；邮件与对象存储供应商暂缓）。\n- 同时通过：T0018（API 服务 C3，交付 #132，提交 c38c2aa）。\n- 本任务 T0019（iOS App C3，按 MVVM）已由用户批准；T0020（AI 编排服务 C3，依赖 T0018、T0019）仍为登记，待 T0019 通过后再请用户批准。\n\n二、推进 T0019 的前置与第一步\n1. 前置已满足：T0018 已通过，T0019 已批准。下一个 Session 先 state get 读变化，再领取 T0019。\n2. 第 1 步先读：truth/architecture/AGENTS.md、《架构设计与制图规范》（第 3–10 节）、C2 设计说明 truth/architecture/festiva-c2/festiva-c2.md、API 服务 C3 设计说明 truth/architecture/festiva-c3-api/festiva-c3-api.md、工程架构文档第 3、4、11 节、高保真设计文档第 1–3 节、Demo 架构方案第 5、6、10 节，以及 T0019 的提案（设计方向已写明）。\n3. 设计方向（用户决定按 MVVM）：顶层按板块切片（Join、Create、Me、角色对话），片内“界面（View）＋视图模型（ViewModel）”；业务模型（Model：值类型与业务接口定义，与服务端共用）居中；适配器在外圈：业务接口客户端（Demo 由 LocalFestivaAPI 顶替）、对话客户端（Demo 由 App 内 AIOrchestrator 顶替）、图片上传器、地图适配器（处理 P1）、定位适配器、推送注册器。确认卡片是 AI 结果写成数据的唯一入口（B1）。评审重点：视图模型不含业务判断。\n4. 一次问清的候选待定项：切片粒度（按板块还是按页面）；界面是否作为独立组件框；确认卡片归哪个切片；P1 的处理（地址转坐标与“在地图中打开”包一层适配器，地图显示与推送注册接受为平台例外）；Demo 专用部分（演示账号、时钟、位置来源、密钥设置）只写在“Demo 对应”栏。\n5. C2 中触及 iOS App 的边 1、2、3、4、5、6、13 都要被 C3 回指：边 1 的外部端点是“国际学生”，边 3 连 AI 编排服务，边 4 连文件存储，边 5 连 Apple 地图服务，边 6、13 连 Apple 推送通知服务。\n\n三、制图的机械要点（本 Session 实测）\n- C3 图源住 truth/architecture/<图名>/<图名>.mmd，与同名 .md 成对；图名建议 festiva-c3-app。子图标签须与容器指针表中的容器名一致（“iOS App”），在工程架构文档第 3 节指针表加一行。\n- 检查从全文第一次出现“容器指针表”处找表：这几个字在工程架构文档中只能出现在指针表正上方。\n- 设计说明里除编号边表外，不能再有首列为纯数字的表，否则会被当成边行解析。\n- 边界边的边表行写“L2 边 N”；外部节点名与 C2 一致（按首行名称比对）。\n- 节点写成 id[\"名称<br/>职责（至多两行）<br/>[英文名 · 技术]\"]；边只用 -->、-.->、<-->，必须带六字以内标签；本族 class … shell；系统框 style …stroke:#4a90e2,stroke-dasharray:6 4；分组框 stroke:#5b81a8,stroke-dasharray:2 2。\n- 顺序：写图源与设计说明 → render-diagrams.mts → export-portable-svg.mts → check.mts → render-diagrams-accept.mts（应为 PASS 26、FAIL 0）→ 无头 Chrome 截图目检（窗口宽高取自 SVG 的 viewBox）→ 一起暂存提交，钩子会对暂存区再检查。\n- 设计说明里的假设与边界写“假设 1”“边界 1”，不用 A1、B1（会与裁决编号混淆）；问题编号接续 P1–P4、O1、O2。\n- 登记或修订范围之前先全文清查受影响的位置（T0016 因漏查修订了两次）。\n- 工程架构文档第 4 节末尾图例仍写“（4.1–4.3）”，4.2 已无图；在 T0020 中顺带更正（其范围含第 4.3 节）。\n\n四、环境\n- python3 为 3.12；node v24.21.0；渲染依赖在 tool/diagram/node_modules（不入库）；Chrome 路径在 tool/diagram/puppeteer-config.json；提交钩子已接好（core.hooksPath 先跑队列检查，再跑制图检查）。\n- 连续写队列按 tool/queue-usage.md“快速收尾”一节：每笔写入前现场取状态并核对序号只因自己的写入前进。\n- 同一工作树可能有其他会话；写队列前先 state get 读变化，只暂存自己的文件，需要时用 ListAgents 与 SendMessage 协调。\n\n五、仍待用户决定的事项（与 T0019 无直接关系）\n- API 服务 C3 设计说明第 6 节的假设 1–5、边界 1–7；其中边界 1（人数上限改到低于已加入人数）、边界 2（活动取消后申请的状态）是产品规则空白，建议另行决定后写入产品设计文档。\n- C1、C2 设计说明中的假设与边界；产品设计文档第 11 节两项标签问题；高保真设计文档 W1-1。\n- 工程架构文档与 Demo 架构方案除第 2、3 节与 4.2 外尚未逐节确认；两份图纸区细则仍为草稿。\n- iOS Demo 实现尚未立项。\n- 推送到 GitHub 须用户明确指示；推送前还需决定早期任务记录与机器账中的旧身份称呼（只追加、不能改写）是否随仓库公开。\n- 根目录 AGENTS.md“Python 3.12 路径见 README”一句与 README 不一致。"}
+- #138｜claim｜claude｜{"expect": 137, "id": "T0019"}
 
 ## 接手说明
 
