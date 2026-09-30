@@ -1,8 +1,8 @@
 # FESTIVA 工程架构文档
 
-- 版本：0.12
+- 版本：0.13
 - 日期：2026-09-29
-- 状态：第 2、3 节（C1 系统语境图、C2 容器图）已逐节确认（2026-09-29，见任务 [T0013](../queue/tasks/T0013/task.md)），任务 [T0016](../queue/tasks/T0016/task.md) 更新两节的技术标签后重新确认（2026-09-29）；第 4.1、4.2、4.3 节改为指向已确认的 iOS App、API 服务、AI 编排服务 C3（任务 [T0019](../queue/tasks/T0019/task.md)、任务 [T0018](../queue/tasks/T0018/task.md)、任务 [T0020](../queue/tasks/T0020/task.md)）；其余章节仍为草稿（F1），见下方“章节状态”。任务 [T0007](../queue/tasks/T0007/task.md) 写成草稿并通过验收
+- 状态：第 1–4 节已逐节确认：第 2、3 节（C1 系统语境图、C2 容器图）2026-09-29 经任务 [T0013](../queue/tasks/T0013/task.md) 确认，任务 [T0016](../queue/tasks/T0016/task.md) 更新技术标签后重新确认，任务 [T0023](../queue/tasks/T0023/task.md) 修改第 3 节表下说明后再次确认；第 1、4 节 2026-09-29 经任务 T0023 确认，第 4 节各小节指向已确认的 iOS App、API 服务、AI 编排服务 C3（任务 [T0019](../queue/tasks/T0019/task.md)、[T0018](../queue/tasks/T0018/task.md)、[T0020](../queue/tasks/T0020/task.md)、[T0022](../queue/tasks/T0022/task.md)）；其余章节仍为草稿（F1），见下方“章节状态”。任务 [T0007](../queue/tasks/T0007/task.md) 写成草稿并通过验收
 - 依据：经确认的 38 项裁决（任务 [T0003](../queue/tasks/T0003/task.md)）；活动字段与产品规则见[产品设计文档](FESTIVA-产品设计文档.md)；原始图示为 [C4 model.png](../reference/C4%20model.png)
 - Demo 开发版本的简化实现不在本文件，见 [Demo 架构方案](demo/FESTIVA-Demo架构方案.md)
 
@@ -20,10 +20,10 @@
 
 | 章节 | 状态 |
 | --- | --- |
-| 1 与 C4 原图的关系 | 草稿 |
+| 1 与 C4 原图的关系 | 已确认（2026-09-29，T0023） |
 | 2 系统上下文 | 已确认（2026-09-29，T0013）；T0016 更新技术标签后重新确认 |
-| 3 容器 | 已确认（2026-09-29，T0013）；T0016 更新技术标签后重新确认 |
-| 4 组件 | 草稿；4.1–4.3 已由 iOS App、API 服务、AI 编排服务的 C3 取代（2026-09-29，T0019、T0018、T0020） |
+| 3 容器 | 已确认（2026-09-29，T0013）；T0016 更新技术标签后重新确认；T0023 修改表下说明后重新确认 |
+| 4 组件 | 已确认（2026-09-29，T0023）；4.1–4.3 指向 iOS App、API 服务、AI 编排服务的 C3（T0019、T0018、T0020、T0022） |
 | 5 AI 角色编排 | 草稿 |
 | 6 推荐排序 | 草稿 |
 | 7 数据实体 | 草稿 |
@@ -38,7 +38,7 @@
 
 ## 1. 与 C4 原图的关系
 
-> 状态：草稿
+> 状态：已确认（2026-09-29，任务 [T0023](../queue/tasks/T0023/task.md)）
 
 C4 原图画在 UI 设计之前，功能定位还没有收敛（A4 备注）。两者冲突时，以产品设计文档和高保真设计文档为准。本文件按 C4 规范重画各层（D4）：第 2、3 节的 C1、C2 已按《架构设计与制图规范》定稿为正式架构图（任务 [T0013](../queue/tasks/T0013/task.md)）；C3 在 C2 定稿后逐个容器评估，API 服务、iOS App、AI 编排服务三张已定稿为正式组件图（任务 [T0018](../queue/tasks/T0018/task.md)、[T0019](../queue/tasks/T0019/task.md)、[T0020](../queue/tasks/T0020/task.md)；iOS App 由任务 [T0022](../queue/tasks/T0022/task.md) 增补），第 4 节各小节指向它们，数据库与文件存储不画 C3。
 
@@ -125,7 +125,7 @@ C1 边表（边号供第 3 节容器图回指）：
 
 ## 3. 容器
 
-> 状态：已确认（2026-09-29，任务 [T0013](../queue/tasks/T0013/task.md)）；任务 [T0016](../queue/tasks/T0016/task.md) 更新技术标签后重新确认（2026-09-29）
+> 状态：已确认（2026-09-29，任务 [T0013](../queue/tasks/T0013/task.md)）；任务 [T0016](../queue/tasks/T0016/task.md) 更新技术标签后重新确认（2026-09-29）；任务 [T0023](../queue/tasks/T0023/task.md) 修改本节末尾的说明后重新确认（2026-09-29）
 
 ```mermaid
 %% name: festiva-c2
@@ -209,11 +209,11 @@ C2 边表（外沿边写明所锚的 C1 边）：
 | iOS App | [festiva-c3-app.md](architecture/festiva-c3-app/festiva-c3-app.md) | [festiva-c3-app.mmd](architecture/festiva-c3-app/festiva-c3-app.mmd) |
 | AI 编排服务 | [festiva-c3-ai.md](architecture/festiva-c3-ai/festiva-c3-ai.md) | [festiva-c3-ai.mmd](architecture/festiva-c3-ai/festiva-c3-ai.mmd) |
 
-C3 在 C2 定稿后逐个容器评估，经决定才画（[图纸区规则](architecture/AGENTS.md)关键规则 6）：API 服务、iOS App、AI 编排服务三张依次由任务 [T0018](../queue/tasks/T0018/task.md)、[T0019](../queue/tasks/T0019/task.md)、[T0020](../queue/tasks/T0020/task.md) 绘制，数据库与文件存储不画。第 4 节中尚未被正式 C3 取代的组件图是说明图，不列入本表。
+C3 在 C2 定稿后逐个容器评估，经决定才画（[图纸区规则](architecture/AGENTS.md)关键规则 6）：API 服务、iOS App、AI 编排服务三张依次由任务 [T0018](../queue/tasks/T0018/task.md)、[T0019](../queue/tasks/T0019/task.md)、[T0020](../queue/tasks/T0020/task.md) 绘制，iOS App 的 C3 由任务 [T0022](../queue/tasks/T0022/task.md) 增补；数据库与文件存储不画。
 
 ## 4. 组件
 
-> 状态：草稿；4.1–4.3 已由 iOS App、API 服务、AI 编排服务的 C3 取代（2026-09-29，任务 [T0019](../queue/tasks/T0019/task.md)、任务 [T0018](../queue/tasks/T0018/task.md)、任务 [T0020](../queue/tasks/T0020/task.md)）
+> 状态：已确认（2026-09-29，任务 [T0023](../queue/tasks/T0023/task.md)）；4.1–4.3 指向 iOS App、API 服务、AI 编排服务的 C3（任务 [T0019](../queue/tasks/T0019/task.md)、任务 [T0018](../queue/tasks/T0018/task.md)、任务 [T0020](../queue/tasks/T0020/task.md)、任务 [T0022](../queue/tasks/T0022/task.md)）
 
 ### 4.1 iOS App
 
@@ -233,7 +233,6 @@ C3 在 C2 定稿后逐个容器评估，经决定才画（[图纸区规则](arch
 - 五个纯规则组件按业务能力划分：活动目录、申请账本、用户档案、推荐排序、通知箱；它们不访问存储、不取当前时间。
 - 业务用例编排一次操作的读取、规则调用、事务提交与事后推送，不做业务判断。
 - 存取口、会话口、图片上传口、邮件口、推送口由业务侧定义，由数据库适配器、会话签发器、图片上传签名器、邮件适配器、推送通知适配器实现；HTTP 接口适配器负责鉴权，并限制 AI 编排服务只能调用只读部分。
-
 
 ### 4.3 AI 编排服务
 
