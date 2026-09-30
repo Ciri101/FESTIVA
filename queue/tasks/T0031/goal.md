@@ -38,29 +38,38 @@
      - （a）评审清单回执与回述写在哪里：修改规范第 7、9、10 节与区规则关键规则 5。Agent 建议认可现行做法：写在各图的设计说明里，任务回执引用它们。
      - （b）两份细则的状态：修改两份细则头部的 status 与状态行。
      - 区规则的修改属于常设规则变更，须用户明确同意。
+  7. 排查报告中的小问题：
+     - 裁决对照表：逐条核对四份主文档附录的落点并改正（例如产品附录 R3 写在 7.2、实际不在；Demo 附录 S7-1 写在第 2 节、实际不在；高保真附录 C 的 V3 写在附录 A、实际不在）。产品第 11 节与附录对 U4 写入位置的说法对齐；“D2 备注”在产品 5.4 中被引用，附录中 D 组归属的说明补上这一例外。Demo 阅读说明的编号说明补上 V。
+     - 交叉引用：Demo 第 6 节与第 9 节中单写的“第 9 节”写明指哪份文档；Demo 第 12 节补 T0022，“流式返回（工程 4.3）”的出处改准。
+     - 术语：“会话令牌”与“用户令牌”统一为一个说法；理由标签中人均花费的写法（产品第 4 节、Demo 第 11 节）与 CAD 的写法统一；AI 编排服务 C3 第 2 节“Demo 对应”中的类型名与 Demo 第 5 节一致（RoleCatalog、SharedContext）；iOS App C3 第 2 节图片存取的“Demo 对应”与 Demo 第 5、12 节一致。
+     - 产品设计文档 5.1：写明活动详情“参加条件”一栏包含哪些字段（高保真 2.3 按它列出）；“用于”一栏补齐交流语言用于详情、人均花费用于列表。
+     - truth/AGENTS.md：更新模板留下的原话（“起步只填写 goals.md”“若保留该区”），使其符合现状。本区契约的改动须用户确认。
+     - 改动的已确认章节须用户重新确认。
 - 不包含：
   - 重复内容的整理（第三件任务）。
-  - 排查报告中列为“小问题”的几项：裁决对照表落点、交叉引用歧义、术语统一、truth/AGENTS.md 中的模板原话。
   - 实现；推送到 GitHub。
 - 允许修改的位置：
-  - truth/FESTIVA-工程架构文档.md：头部、阅读说明、第 3、4.2、5.1、11 节。
-  - truth/demo/FESTIVA-Demo架构方案.md：头部、章节状态、第 5、7.1、9、10.1、10.3 节。
+  - truth/FESTIVA-产品设计文档.md：头部、章节状态、第 4、5.1、11 节与附录。
+  - truth/ui/FESTIVA-高保真设计文档.md：头部、章节状态、附录 C。
+  - truth/FESTIVA-工程架构文档.md：头部、阅读说明、第 3、4.2、4.3、5.1、10、11 节与附录。
+  - truth/demo/FESTIVA-Demo架构方案.md：头部、阅读说明、章节状态、第 5、6、7.1、9、10.1、10.3、11、12 节与附录。
   - truth/goals.md：全文。
+  - truth/AGENTS.md：全文。
   - truth/architecture/AGENTS.md：关键规则 5、7，“命名与文件”一节。
   - truth/architecture/架构设计与制图规范.md：头部、第 1、2、5、7、8、9、10、11 节。
   - truth/architecture/治理细则.md：头部、第 3、4、7 节。
   - truth/architecture/festiva-c1/festiva-c1.md：头部与状态行、第 4 节。
   - truth/architecture/festiva-c2/festiva-c2.md：头部与状态行、第 2、5 节。
-  - truth/architecture/festiva-c3-api/festiva-c3-api.md：头部与状态行、第 2、3 节。
-  - truth/architecture/festiva-c3-app/festiva-c3-app.md：头部与状态行、第 1、3 节。
-  - truth/architecture/festiva-c3-ai/festiva-c3-ai.md：头部与状态行、第 4、6 节。
+  - truth/architecture/festiva-c3-api/festiva-c3-api.md：头部与状态行、第 2、3、6 节。
+  - truth/architecture/festiva-c3-app/festiva-c3-app.md：头部与状态行、第 1、2、3、6 节。
+  - truth/architecture/festiva-c3-ai/festiva-c3-ai.md：头部与状态行、第 1、2、3、4、6 节。
   - 队列文件经工具维护。
 
 ## 验收标准与验证方法
 
 | 编号 | 可观察的结果 | 验证方法 | 通过条件 |
 |---|---|---|---|
-| A1 | 列为“过时与冲突”的各项都已处理 | 按范围第 1–5 项逐项核对原文 | 每项都已改正；不改的写明理由 |
+| A1 | 列为“过时与冲突”的各项与小问题都已处理 | 按范围第 1–5、7 项逐项核对原文 | 每项都已改正；不改的写明理由 |
 | A2 | 两项治理问题按用户的决定落地 | 阅读规范第 10 节、区规则关键规则 5、两份细则的头部 | 与用户的决定一致；规则与实际做法不再矛盾 |
 | A3 | 改动的已确认内容经用户重新确认 | 用户在对话中确认 | 状态据此更新 |
 | A4 | 检查为绿、链接可用 | 运行 `tool/diagram/check.mts`；本地相对链接检查 | 无红；无断链 |
