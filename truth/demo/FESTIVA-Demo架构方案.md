@@ -1,6 +1,6 @@
 # FESTIVA Demo 架构方案
 
-- 版本：0.4
+- 版本：0.5
 - 日期：2026-09-29
 - 状态：草稿。任务 [T0009](../../queue/tasks/T0009/task.md) 已通过验收，各章节尚未逐节确认（F1），见下方“章节状态”
 - 依据：经确认的 38 项裁决（任务 [T0003](../../queue/tasks/T0003/task.md)）；2026-09-29 决定 Demo 简化方案单独成文，`object/` 的实现以本文件为依据（任务 [T0009](../../queue/tasks/T0009/task.md)）
@@ -158,8 +158,8 @@ flowchart LR
 | Features/Chat | 角色对话、AI 服务使用说明、确认卡片 | 否 | iOS App：角色对话、确认卡片 |
 | Features/Onboarding | 选择演示账号（代替注册与登录） | 是 | iOS App |
 | Features/Common | 活动卡、理由标签、提示条、空状态等共用组件 | 否 | iOS App |
-| Domain | 值类型；业务接口 FestivaAPI 与只读子集 FestivaReadAPI；规则函数（资格、名额、可见范围）；推荐排序 | 接口不是；规则函数在 Demo 中代替服务端执行 | iOS App：API 客户端（接口）；API 服务（规则） |
-| Data | SwiftData 模型；LocalFestivaAPI（在本机实现业务接口）；图片文件存取 | 是 | API 服务、数据库、文件存储 |
+| Domain | 值类型；业务接口 FestivaAPI 与只读子集 FestivaReadAPI；按 API 服务 C3 划分的五组纯规则：活动目录、申请账本、用户档案、推荐排序（RankingEngine）、通知箱 | 接口不是；规则在 Demo 中代替服务端执行，将来与服务端共用 | API 服务 C3 的五个规则组件；业务接口由其业务用例定义 |
+| Data | SwiftData 模型与存取；LocalFestivaAPI（在本机实现业务接口）；图片文件存取 | 是 | API 服务 C3 的业务用例（LocalFestivaAPI）、数据库适配器（SwiftData 存取）、图片上传签名器（图片文件存取）；另代替数据库与文件存储 |
 | AI | AIOrchestrator、三个角色的定义、工具、输出校验、LLMClient 与供应商适配器 | 在 App 内运行是 Demo 简化 | AI 编排服务 |
 | Platform | 钥匙串、定位、地理编码、打开地图 App | 否 | iOS App：位置 |
 | Demo | 演示账号切换、演示时钟、演示位置、演示脚本客户端、种子导入与重置 | 是 | 无，见第 12 节 |
@@ -168,7 +168,7 @@ flowchart LR
 
 - Features 只使用 Domain 的业务接口和值类型，不直接读写 SwiftData 模型。
 - AI 只拿到只读接口 FestivaReadAPI，类型上无法调用写入方法；写入只由界面在用户确认后调用（B1）。
-- 业务规则只写在 Domain 的规则函数中，由 LocalFestivaAPI 调用；界面只负责显示和收集输入。这与正式架构中“API 服务是业务规则的唯一执行者”一致。
+- 业务规则只写在 Domain 的五组纯规则中，由 LocalFestivaAPI 调用；LocalFestivaAPI 只做读取、调用规则、一次保存，不做业务判断（[API 服务 C3](../architecture/festiva-c3-api/festiva-c3-api.md)的观察 O2）；界面只负责显示和收集输入。这与正式架构中“API 服务是业务规则的唯一执行者”一致。
 - 换成服务端时，只需新增一个通过网络调用 API 服务的 FestivaAPI 实现，并在 App 装配处替换；Data 与 Demo 模块随之移除。
 
 `object/` 目录结构：
@@ -186,8 +186,13 @@ object/
       Chat/
       Onboarding/
       Common/
-    Domain/                  # 值类型、FestivaAPI、规则函数、RankingEngine
-    Data/                    # SwiftData 模型、LocalFestivaAPI、图片文件
+    Domain/                  # 值类型、FestivaAPI 与 FestivaReadAPI
+      PartyCatalog/          # 活动目录：活动状态、字段过滤、节日与标签列表
+      MembershipLedger/      # 申请账本：资格、状态转换、名额、改性别的撤回与退出
+      UserProfile/           # 用户档案：学校、可见范围、改性别的影响、收藏、AI 同意
+      RecommendationRanking/ # 推荐排序：RankingEngine
+      NotificationInbox/     # 通知箱：事件的接收人
+    Data/                    # LocalFestivaAPI（业务用例）、SwiftData 模型与存取、图片文件
     AI/                      # AIOrchestrator、Roles、Tools、OutputGuard、LLMClient 与适配器
     Platform/                # Keychain、Location、Geocoding、MapsLauncher
     Demo/                    # DemoSession、DemoClock、DemoLocation、ScriptedLLMClient、SeedImporter
@@ -391,24 +396,24 @@ AIOrchestrator 在 App 内完成工程 5.1 中 AI 编排服务的工作：
 
 > 状态：草稿
 
-组件名称均为工程架构文档中的名称。表中每一项都是 Demo 专用。
+API 服务的组件名称取自其 C3 组件图（任务 [T0018](../../queue/tasks/T0018/task.md)），其余沿用工程架构文档第 4 节的名称。表中每一项都是 Demo 专用。
 
 | Demo 简化 | 正式架构组件 | 正式做法 | 依据 |
 | --- | --- | --- | --- |
-| SwiftData 本地数据，一台设备上多个账号共用 | 数据库；API 服务 | PostgreSQL，只经 API 服务读写（工程 3、7） | R6 |
-| 业务规则由 App 内的 LocalFestivaAPI 执行 | API 服务：活动、申请与名额、认证与用户 | 服务端执行，App 经 API 客户端调用（工程 3、4.2） | R6 |
+| SwiftData 本地数据，一台设备上多个账号共用 | 数据库；API 服务：数据库适配器 | PostgreSQL，只经 API 服务读写（工程 3、7） | R6 |
+| 业务规则由 App 内的 LocalFestivaAPI 执行 | API 服务：业务用例、活动目录、申请账本、用户档案 | 服务端执行，App 经 API 客户端调用（工程 3、4.2） | R6 |
 | 推荐排序在 App 内完成 | API 服务：推荐排序 | 服务端过滤与排序（工程 6） | D3、R6 |
 | AI 编排在 App 内，App 直接调用云端大模型 | AI 编排服务：会话入口、角色定义、上下文装配、工具执行、输出校验 | 服务端编排，App 不连 LLM（工程 4.3、5） | D1、R6 |
 | 用户自带密钥，存本机钥匙串 | AI 编排服务 | 密钥只保存在服务端配置中（工程 12） | D1、R6 |
 | 没有密钥时使用演示脚本 | 云端大模型服务 | 始终调用模型，不可用时提示（工程 13） | R6 |
 | 对话不流式返回 | AI 编排服务：会话入口 | 流式返回（工程 4.3） | — |
 | 对话记录只在内存中 | AI 编排服务 | 是否保存待确认（工程 5.3、15） | B2 |
-| 预置认证，切换演示账号 | API 服务：认证与用户；邮件发送服务 | 学校邮箱验证码注册登录（工程 10） | C1 |
-| 学校直接写入种子 | API 服务：认证与用户 | 由邮箱域名确定（工程 10） | S6-1 |
-| 只有站内通知，没有推送 | API 服务：通知；Apple 推送通知服务 | 站内通知加 APNs 推送（工程 9） | — |
-| 图片存安装包和 App 沙盒 | 文件存储；API 服务：文件 | 对象存储，签名地址上传（工程 3） | — |
-| 同意记录存本机 | API 服务（AI_CONSENT 实体） | 服务端记录，没有同意时 AI 编排服务拒绝请求（工程 5.3） | C9 |
-| 演示时钟 | API 服务 | 以服务端当前时间判断活动状态（工程 8） | — |
+| 预置认证，切换演示账号 | API 服务：用户档案、会话签发器、邮件适配器；邮件发送服务 | 学校邮箱验证码注册登录（工程 10） | C1 |
+| 学校直接写入种子 | API 服务：用户档案 | 由邮箱域名确定（工程 10） | S6-1 |
+| 只有站内通知，没有推送 | API 服务：通知箱、推送通知适配器；Apple 推送通知服务 | 站内通知加 APNs 推送（工程 9） | — |
+| 图片存安装包和 App 沙盒 | 文件存储；API 服务：图片上传签名器 | 对象存储，签名地址上传（工程 3） | — |
+| 同意记录存本机 | API 服务：用户档案（AI 同意记录） | 服务端记录，没有同意时 AI 编排服务拒绝请求（工程 5.3） | C9 |
+| 演示时钟 | API 服务：业务用例（当前时间由它传入规则） | 以服务端当前时间判断活动状态（工程 8） | — |
 | 演示位置 | iOS App：位置 | 当前定位或手动选择的位置（工程 11） | — |
 | 性格与氛围偏好只经 Patti 参与排序 | API 服务：推荐排序 | 已确认的资料直接参与软偏好排序（工程 6） | S4-4 |
 

@@ -6,5 +6,9 @@
   "festiva-c2/festiva-c2.svg": {
     "doc": "FESTIVA-工程架构文档.md",
     "hash": "c6fdf07f7c0632b3"
+  },
+  "festiva-c3-api/festiva-c3-api.svg": {
+    "doc": "architecture/festiva-c3-api/festiva-c3-api.mmd",
+    "hash": "ef3a380e16d107b8"
   }
 }

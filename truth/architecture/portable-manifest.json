@@ -6,5 +6,9 @@
   "festiva-c2/portable/festiva-c2-portable.svg": {
     "source": "festiva-c2/festiva-c2.svg",
     "source_hash": "ae08bbc22e9eae1e"
+  },
+  "festiva-c3-api/portable/festiva-c3-api-portable.svg": {
+    "source": "festiva-c3-api/festiva-c3-api.svg",
+    "source_hash": "9dc5ba040d16d748"
   }
 }

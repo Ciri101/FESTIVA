@@ -1,8 +1,8 @@
 # FESTIVA 工程架构文档
 
-- 版本：0.7
+- 版本：0.8
 - 日期：2026-09-29
-- 状态：第 2、3 节（C1 系统语境图、C2 容器图）已逐节确认（2026-09-29，见任务 [T0013](../queue/tasks/T0013/task.md)），任务 [T0016](../queue/tasks/T0016/task.md) 更新两节的技术标签后重新确认（2026-09-29）；其余章节仍为草稿（F1），见下方“章节状态”。任务 [T0007](../queue/tasks/T0007/task.md) 写成草稿并通过验收
+- 状态：第 2、3 节（C1 系统语境图、C2 容器图）已逐节确认（2026-09-29，见任务 [T0013](../queue/tasks/T0013/task.md)），任务 [T0016](../queue/tasks/T0016/task.md) 更新两节的技术标签后重新确认（2026-09-29）；第 4.2 节改为指向已确认的 API 服务 C3（任务 [T0018](../queue/tasks/T0018/task.md)）；其余章节仍为草稿（F1），见下方“章节状态”。任务 [T0007](../queue/tasks/T0007/task.md) 写成草稿并通过验收
 - 依据：经确认的 38 项裁决（任务 [T0003](../queue/tasks/T0003/task.md)）；活动字段与产品规则见[产品设计文档](FESTIVA-产品设计文档.md)；原始图示为 [C4 model.png](../reference/C4%20model.png)
 - Demo 开发版本的简化实现不在本文件，见 [Demo 架构方案](demo/FESTIVA-Demo架构方案.md)
 
@@ -23,7 +23,7 @@
 | 1 与 C4 原图的关系 | 草稿 |
 | 2 系统上下文 | 已确认（2026-09-29，T0013）；T0016 更新技术标签后重新确认 |
 | 3 容器 | 已确认（2026-09-29，T0013）；T0016 更新技术标签后重新确认 |
-| 4 组件 | 草稿 |
+| 4 组件 | 草稿；4.2 已由 API 服务的 C3 取代（2026-09-29，T0018） |
 | 5 AI 角色编排 | 草稿 |
 | 6 推荐排序 | 草稿 |
 | 7 数据实体 | 草稿 |
@@ -205,12 +205,13 @@ C2 边表（外沿边写明所锚的 C1 边）：
 
 | 容器 | 详设文档 | 图源 |
 | --- | --- | --- |
+| API 服务 | [festiva-c3-api.md](architecture/festiva-c3-api/festiva-c3-api.md) | [festiva-c3-api.mmd](architecture/festiva-c3-api/festiva-c3-api.mmd) |
 
-暂时为空：C3 在 C2 定稿后逐个容器评估，经决定才画（[图纸区规则](architecture/AGENTS.md)关键规则 6）。第 4 节的三个组件图是说明图，不列入本表。
+C3 在 C2 定稿后逐个容器评估，经决定才画（[图纸区规则](architecture/AGENTS.md)关键规则 6）：API 服务、iOS App、AI 编排服务三张依次由任务 [T0018](../queue/tasks/T0018/task.md)、[T0019](../queue/tasks/T0019/task.md)、[T0020](../queue/tasks/T0020/task.md) 绘制，数据库与文件存储不画。第 4 节中尚未被正式 C3 取代的组件图是说明图，不列入本表。
 
 ## 4. 组件
 
-> 状态：草稿
+> 状态：草稿；4.2 已由 API 服务的 C3 取代（2026-09-29，任务 [T0018](../queue/tasks/T0018/task.md)）
 
 ### 4.1 iOS App
 
@@ -243,22 +244,12 @@ flowchart LR
 
 ### 4.2 API 服务
 
-```mermaid
-flowchart LR
-  subgraph api["API 服务"]
-    auth["认证与用户<br/>[Component]<br/>学校邮箱验证、会话、资料与可见范围"]
-    party["活动<br/>[Component]<br/>创建、编辑、取消、状态"]
-    member["申请与名额<br/>[Component]<br/>状态转换、名额与性别校验"]
-    ranking["推荐排序<br/>[Component]<br/>硬条件过滤、软偏好排序、理由标签"]
-    notify["通知<br/>[Component]<br/>站内通知与推送"]
-    media["文件<br/>[Component]<br/>签发上传地址"]
-  end
-  party --> notify
-  member --> notify
-  member --> party
-  ranking --> party
-  ranking --> auth
-```
+本节原来的草稿说明图已由正式的 C3 组件图取代（任务 [T0018](../queue/tasks/T0018/task.md)，2026-09-29 经用户确认）：图源、渲染图、组件注记（含 Demo 对应）、编号边表与评审回执见 [architecture/festiva-c3-api/](architecture/festiva-c3-api/festiva-c3-api.md)，并在第 3 节登记。要点：
+
+- 五个纯规则组件按业务能力划分：活动目录、申请账本、用户档案、推荐排序、通知箱；它们不访问存储、不取当前时间。
+- 业务用例编排一次操作的读取、规则调用、事务提交与事后推送，不做业务判断。
+- 存取口、会话口、图片上传口、邮件口、推送口由业务侧定义，由数据库适配器、会话签发器、图片上传签名器、邮件适配器、推送通知适配器实现；HTTP 接口适配器负责鉴权，并限制 AI 编排服务只能调用只读部分。
+
 
 ### 4.3 AI 编排服务
 
@@ -498,7 +489,7 @@ stateDiagram-v2
 | D1 | 1、2、3、12 |
 | D2 | 1、2、3、11 |
 | D3 | 1、3、4.1、6 |
-| D4 | 1、2、3（C1、C2 正式架构图），以及第 4 节的说明图 |
+| D4 | 1、2、3（C1、C2 正式架构图）、4.2（API 服务的正式 C3），以及第 4 节其余的说明图 |
 | D5 | 1、2、3 |
 | E4 | 3 |
 | R1 | 1、2、3、11 |
