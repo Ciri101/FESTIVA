@@ -11,9 +11,9 @@ python3 tool/shell.py state get
 python3 tool/shell.py task status
 ```
 
-先按入口读取区域契约、核对工作对象位置和用户授权，填写 truth/goals.md；需要常驻的规则写进对应区域契约，不另建接入表。新克隆须 init 安装本机钩子；已有钩子保留并串接。doctor 应为 `protection: ready` 且 `protocol: 2`。原 v1 账只读，须按下文显式升级，不自动猜测转换。
+先按根契约读取区域契约、核对工作对象位置和用户授权，填写 truth/goals.md；跨区常驻的规则写进根契约，只适用于某区的写进该区契约，不另建接入表。新克隆须 init 安装本机钩子；已有钩子保留并串接。doctor 应为 `protection: ready` 且 `protocol: 2`。原 v1 账只读，须按下文显式升级，不自动猜测转换。
 
-`state get` 返回 `context`、`base`、`manifest` 和 `files`。**按 files 中每个 source 的 parts 顺序读取全部分片**；拼接即该源文件全文，无附加摘要。清单是校验元数据，不是第三类业务内容。首次 Session 读全包；后续可按源指纹识别变化再读。charter/入口规则仍按 AGENTS.md 单独阅读，不被偷偷加入状态包。
+`state get` 返回 `context`、`base`、`manifest` 和 `files`。**按 files 中每个 source 的 parts 顺序读取全部分片**；拼接即该源文件全文，无附加摘要。清单是校验元数据，不是第三类业务内容。首次 Session 读全包；后续可按源指纹识别变化再读。根契约与各区契约仍按 AGENTS.md 单独阅读，不被偷偷加入状态包。
 
 正文唯一来源：配置白名单内 truth 文件全文，加全部窗口任务包文件全文。候裁池（登记）、通过、已取消档案不入包，外部引用不递归展开。分片默认 24000 字符，可用 `--chunk-chars N` 改运输尺寸，不是 token 数，不改变送达内容；不同尺寸独立保存，不破坏其他调用者的分片。
 

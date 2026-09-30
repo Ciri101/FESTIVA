@@ -74,4 +74,4 @@
 - 按任务进行；改完跑夹具。夹具在 `settings.l2_diagrams` 声明两张图之前会把 9 个用例记为 SKIP，声明之后 SKIP 须为 0。
 - 与 envshell 同步上游时，保留各 `.mts` 开头的克隆注记，并重放其中列出的改动。
 
-返回 [tool 区](../AGENTS.md) · [公共入口](../../AGENTS.md)。
+返回 [tool 区](../AGENTS.md) · [根契约](../../AGENTS.md)。

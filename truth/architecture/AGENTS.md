@@ -40,4 +40,4 @@
 
 渲染、导出、检查、安装与提交钩子的命令见 [tool/diagram/AGENTS.md](../../tool/diagram/AGENTS.md)。本机装了提交钩子后，暂存改动触及 `truth/` 或 `tool/diagram/` 的提交会对暂存内容跑三项检查，有红就拒绝提交。
 
-返回 [truth 区](../AGENTS.md) · [公共入口](../../AGENTS.md)。
+返回 [truth 区](../AGENTS.md) · [根契约](../../AGENTS.md)。
