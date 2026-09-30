@@ -1,6 +1,6 @@
 # FESTIVA Demo 架构方案
 
-- 版本：0.7
+- 版本：0.8
 - 日期：2026-09-29
 - 状态：草稿。任务 [T0009](../../queue/tasks/T0009/task.md) 已通过验收，各章节尚未逐节确认（F1），见下方“章节状态”
 - 依据：经确认的 38 项裁决（任务 [T0003](../../queue/tasks/T0003/task.md)）；2026-09-29 决定 Demo 简化方案单独成文，`object/` 的实现以本文件为依据（任务 [T0009](../../queue/tasks/T0009/task.md)）
@@ -161,7 +161,7 @@ flowchart LR
 | Domain | 值类型；业务接口 FestivaAPI 与只读子集 FestivaReadAPI；按 API 服务 C3 划分的五组纯规则：活动目录、申请账本、用户档案、推荐排序（RankingEngine）、通知箱；业务接口按板块拆成子协议，FestivaAPI 是它们的组合 | 接口不是；规则在 Demo 中代替服务端执行，将来与服务端共用 | API 服务 C3 的五个规则组件；业务接口由其业务用例定义 |
 | Data | SwiftData 模型与存取；LocalFestivaAPI（在本机实现业务接口）；图片文件存取 | 是 | API 服务 C3 的业务用例（LocalFestivaAPI）、数据库适配器（SwiftData 存取）、图片上传签名器（图片文件存取）；另代替数据库与文件存储 |
 | AI | AIOrchestrator、RoleCatalog 与提示词、SharedContext、三个工具（PartySearch、PartyDraft、ProfileSummary，各自校验参数、生成卡片）、LLMClient 与 Qwen 适配器 | 在 App 内运行是 Demo 简化 | AI 编排服务 C3：对话用例（AIOrchestrator）、角色目录、共享上下文、活动搜索、活动草稿、资料摘要、大模型适配器；对话接口适配器与只读接口客户端在 Demo 中不存在：界面直接调用 AIOrchestrator，FestivaReadAPI 由 LocalFestivaAPI 直接提供 |
-| Platform | 钥匙串、定位、地理编码、打开地图 App | 否 | iOS App C3：定位适配器、地图适配器；钥匙串在 Demo 中保存用户自带的 LLM 密钥 |
+| Platform | 钥匙串、定位、地理编码、打开地图 App、对话记录的本机存取 | 否 | iOS App C3：定位适配器、地图适配器、对话记录存取适配器（ChatHistoryStore）；钥匙串在 Demo 中保存用户自带的 LLM 密钥 |
 | Demo | 演示账号切换、演示时钟、演示位置、演示脚本客户端、种子导入与重置 | 是 | 无，见第 12 节 |
 
 边界规则：
@@ -196,7 +196,7 @@ object/
       NotificationInbox/     # 通知箱：事件的接收人
     Data/                    # LocalFestivaAPI（业务用例）、SwiftData 模型与存取、图片文件
     AI/                      # AIOrchestrator、RoleCatalog、SharedContext、Tools（三个工具）、LLMClient 与 Qwen 适配器
-    Platform/                # Keychain、Location（定位适配器）、Geocoding 与 MapsLauncher（地图适配器）
+    Platform/                # Keychain、Location（定位适配器）、Geocoding 与 MapsLauncher（地图适配器）、ChatHistoryStore（对话记录存取适配器）
     Demo/                    # DemoSession、DemoClock、DemoLocation、ScriptedLLMClient、SeedImporter
     Resources/
       Seed/                  # seed.json、封面图与头像
@@ -244,6 +244,7 @@ object/
 - 时间以绝对时间点加活动时区存储，按温哥华时间显示，带年份，星期由系统生成（C6）。
 - 不建 DEVICE_TOKEN（Demo 没有推送）。
 - 演示设置（当前演示账号、演示时钟、位置来源、AI 模式）存 UserDefaults，不属于业务数据；密钥不存这里（10.4）。
+- 对话记录也不属于业务数据：由 Platform 的 ChatHistoryStore 按账号与角色保存在单独的 SwiftData 存储中，与业务数据分开，不经 FestivaAPI（iOS App C3 的对话记录存取适配器，任务 [T0022](../../queue/tasks/T0022/task.md)）。切换演示账号时，各账号看到各自的记录；“重置演示数据”时一并清空。
 
 ### 7.2 种子数据
 

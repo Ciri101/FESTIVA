@@ -24,6 +24,7 @@ flowchart TB
       mapsA["地图适配器<br/>地址转坐标、打开地图<br/>[maps adapter · MapKit]"]
       locA["定位适配器<br/>当前位置与授权<br/>[location adapter · Core Location]"]
       pushR["推送注册器<br/>注册设备、接收推送<br/>[push registrar · APNs]"]
+      historyA["对话记录存取适配器<br/>按账号与角色保存对话记录<br/>[chat history storage adapter · SwiftData]"]
     end
   end
   api["API 服务<br/>[Container]"]
@@ -55,9 +56,10 @@ flowchart TB
   vlayer -->|"显示地图"| maps
   pushR -->|"注册设备"| apns
   apns -.->|"送达通知"| pushR
+  chatVM -->|"存取记录"| historyA
   classDef shell fill:#deebf7,stroke:#5b81a8
   classDef ext fill:#f2f2f2,stroke:#8a8a8a
-  class signinV,joinV,createV,meV,chatV,signinVM,joinVM,createVM,meVM,chatVM,apiClient,chatClient,imageIO,mapsA,locA,pushR shell
+  class signinV,joinV,createV,meV,chatV,signinVM,joinVM,createVM,meVM,chatVM,apiClient,chatClient,imageIO,mapsA,locA,pushR,historyA shell
   class student,api,aiSvc,files,maps,apns ext
   style ios fill:none,stroke:#4a90e2,stroke-dasharray:6 4
   style vlayer fill:none,stroke:#5b81a8,stroke-dasharray:2 2
