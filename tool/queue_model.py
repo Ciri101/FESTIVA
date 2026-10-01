@@ -44,10 +44,20 @@ def exact(value, keys, name):
 
 
 def task_id(value):
-    require(isinstance(value, str) and re.fullmatch(r'T[0-9]{4,}', value), '任务号格式错误。')
+    # New IDs are T plus an unpadded number (T1, T10); zero-padded IDs already in a ledger (T0001) stay valid.
+    require(isinstance(value, str) and re.fullmatch(r'T[0-9]+', value), '任务号格式错误。')
     n = int(value[1:])
-    require(n > 0 and value == f'T{n:04d}', '任务号须为规范的正整数编号。')
+    require(n > 0 and value in (f'T{n}', f'T{n:04d}'),
+            '任务号须为 T 加正整数：新编号不补零，账本里已有的四位补零编号照旧有效。')
     return value
+
+
+def task_number(value):
+    return int(value[1:])
+
+
+def next_task_id(tasks):
+    return f'T{max([task_number(k) for k in tasks] or [0]) + 1}'
 
 
 def proposal(value):
@@ -180,7 +190,7 @@ def blockers(tasks, ident):
         result.append(f"已由 {item['assignee']} 认领")
     if any(tasks[p]['status'] != '批准执行' for p in parents(tasks, ident)):
         result.append('祖先未处于批准执行状态')
-    for dep in sorted(dependencies(tasks, ident)):
+    for dep in sorted(dependencies(tasks, ident), key=task_number):
         if tasks[dep]['status'] != '收官':
             result.append(f"前置 {dep} 为{tasks[dep]['status']}，未收官")
     if any(tasks[c]['status'] not in TERMINAL for c in children(tasks, ident)):
@@ -255,15 +265,15 @@ def apply(tasks, event):
         require(not tasks and isinstance(data['tasks'], list) and data['tasks'], '只能向空账导入非空候裁列表。')
         for row in data['tasks']:
             exact(row, {'id', 'proposal', 'parent', 'deps', 'legacy'}, '导入任务')
-            require(row['id'] not in tasks, '导入编号重复。')
+            require(task_number(task_id(row['id'])) not in {task_number(k) for k in tasks}, '导入编号重复（同一数值只能对应一个任务）。')
             text(row['legacy'], '旧记录')
             tasks[row['id']] = new_task(row['id'], row['proposal'], row['parent'], row['deps'], event, row['legacy'])
             touched.append(row['id'])
         validate_graph(tasks)
     elif op == 'create':
         exact(data, {'id', 'proposal', 'parent', 'deps', 'authority'}, '登记')
-        expected = f"T{max([int(k[1:]) for k in tasks] or [0]) + 1:04d}"
-        require(data['id'] == expected, '编号必须由账本连续分配，不得复用。', 'identity')
+        require(task_number(task_id(data['id'])) == task_number(next_task_id(tasks)),
+                '编号必须由账本连续分配，不得复用。', 'identity')
         item = new_task(data['id'], data['proposal'], data['parent'], data['deps'], event)
         tasks[item['id']] = item
         relation_change(tasks, item, data['parent'], data['deps'])
@@ -346,7 +356,7 @@ def apply(tasks, event):
                 outside = children(tasks, key) - targets
                 require(all(tasks[c]['status'] in TERMINAL or (op == 'revoke' and tasks[c]['status'] == '候裁')
                             for c in outside), '先处理孩子，或显式使用 --tree 整笔处理。', 'state')
-            touched = sorted(targets, key=lambda i: (-len(parents(tasks, i)), int(i[1:])))
+            touched = sorted(targets, key=lambda i: (-len(parents(tasks, i)), task_number(i)))
             for key in touched:
                 tasks[key]['status'] = '候裁' if op == 'revoke' else '驳回'
                 tasks[key]['assignee'] = None

@@ -6,7 +6,7 @@ import copy
 import json
 from queue_model import (require, exact, text, relative_path, authority,
                          apply as apply_v1, projections as project_v1, blockers as blockers_v1,
-                         children)
+                         children, task_number)
 
 CONFIG = 'charter/config.json'
 ARCHIVE = '.shell/queue/archive'
@@ -35,7 +35,7 @@ def config_bytes(value):
 
 
 def occupied(tasks):
-    return sorted(k for k, t in tasks.items() if t['status'] in WINDOW and not children(tasks, k))
+    return sorted((k for k, t in tasks.items() if t['status'] in WINDOW and not children(tasks, k)), key=task_number)
 
 
 def check_capacity(tasks, policy):

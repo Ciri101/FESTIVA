@@ -6,3 +6,6 @@ Thumbs.db
 /.shell/local/
 __pycache__/
 *.pyc
+
+# 制图工具的渲染依赖（mermaid-cli），按 tool/diagram/AGENTS.md 在本机安装，不入库。
+/tool/diagram/node_modules/

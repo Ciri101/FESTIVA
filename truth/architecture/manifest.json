@@ -1,0 +1,22 @@
+{
+  "festiva-c1/festiva-c1.svg": {
+    "doc": "FESTIVA-工程架构文档.md",
+    "hash": "06c3650ae4c6a139"
+  },
+  "festiva-c2/festiva-c2.svg": {
+    "doc": "FESTIVA-工程架构文档.md",
+    "hash": "c6fdf07f7c0632b3"
+  },
+  "festiva-c3-api/festiva-c3-api.svg": {
+    "doc": "architecture/festiva-c3-api/festiva-c3-api.mmd",
+    "hash": "ef3a380e16d107b8"
+  },
+  "festiva-c3-app/festiva-c3-app.svg": {
+    "doc": "architecture/festiva-c3-app/festiva-c3-app.mmd",
+    "hash": "1fb2a62b0decedcf"
+  },
+  "festiva-c3-ai/festiva-c3-ai.svg": {
+    "doc": "architecture/festiva-c3-ai/festiva-c3-ai.mmd",
+    "hash": "0056ab9e01161426"
+  }
+}

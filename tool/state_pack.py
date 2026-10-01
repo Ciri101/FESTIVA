@@ -1,9 +1,21 @@
 """Deterministic full-file transport: truth whitelist + in-window task packages only."""
 import json
+import re
+import shutil
 from queue_model import require, sha, line, unique_object
 from queue_v2 import CONFIG, WINDOW, config, projections
 
 PACK_FORMAT = 'devtemplate-state/1'
+STATE_CACHE = '.shell/local/state'
+# Stale versions kept for fingerprint comparison; older ones are deleted on the next state get.
+KEEP_STALE = 2
+VERSION_DIR = re.compile(r'[0-9a-f]{64}-[1-9][0-9]*\Z')
+
+
+def order(item):
+    # Task packages sort by number (T9 before T10); other sources keep path order.
+    m = re.match(r'(queue/tasks/)T([0-9]+)(/.*)\Z', item[0])
+    return (m[1], int(m[2]), m[3]) if m else (item[0], 0, '')
 
 
 def load_config(store):
@@ -41,7 +53,7 @@ def collect(store, raw, events, tasks):
         require('\x00' not in value, f'状态源含二进制内容：{name}', 'state_source')
     metadata = {'format': PACK_FORMAT, 'seq': len(events), 'ledger_sha256': sha(raw),
                 'config_sha256': sha(safe(store.root, CONFIG).read_bytes()),
-                'sources': [{'path': store.gpath(n), 'sha256': sha(v), 'bytes': len(v)} for n, v in sorted(sources.items())]}
+                'sources': [{'path': store.gpath(n), 'sha256': sha(v), 'bytes': len(v)} for n, v in sorted(sources.items(), key=order)]}
     return sha(line(metadata).encode()), metadata, sources
 
 
@@ -56,14 +68,14 @@ def snapshot(store, raw, events, tasks):
 
 def cached(store, token, metadata, sources):
     from task_queue import safe
-    home = f'.shell/local/state/{token}'
+    home = f'{STATE_CACHE}/{token}'
     manifest = safe(store.root, home + '/manifest.json')
     require(manifest.is_file(), '此状态包尚未生成或缓存缺失；先 state get。', 'state_cache')
     doc = json.loads(manifest.read_bytes().decode('utf-8'), object_pairs_hook=unique_object)
     require(set(doc) == {'context','metadata','files'} and doc['context'] == token and doc['metadata'] == metadata,
             '状态包清单被改写；重新 state get 重建。', 'state_cache')
     require(isinstance(doc['files'], list) and len(doc['files']) == len(sources), '状态包文件清单不完整。', 'state_cache')
-    for index, (name, data) in enumerate(sorted(sources.items())):
+    for index, (name, data) in enumerate(sorted(sources.items(), key=order)):
         row = doc['files'][index]
         require(set(row) == {'source','parts'} and row['source'] == store.gpath(name) and
                 isinstance(row['parts'], list) and row['parts'], '状态包文件项不合法。', 'state_cache')
@@ -78,15 +90,41 @@ def cached(store, token, metadata, sources):
     return doc
 
 
+def prune(store, source_token):
+    # Runs under the queue lock after delivery. Every chunk size of the current state stays valid for
+    # writes; beyond that only the newest stale versions stay. Best effort: never fails the delivery.
+    from task_queue import safe
+    stale = []
+    for entry in safe(store.root, STATE_CACHE).iterdir():
+        if entry.is_symlink() or not entry.is_dir() or not VERSION_DIR.match(entry.name):
+            continue
+        if entry.name.partition('-')[0] == source_token:
+            continue
+        manifest = entry / 'manifest.json'
+        try:
+            stamp = (manifest if manifest.is_file() else entry).stat().st_mtime
+        except OSError:
+            continue
+        stale.append((stamp, entry.name, entry))
+    pruned = 0
+    for _, _, entry in sorted(stale, reverse=True)[KEEP_STALE:]:
+        try:
+            shutil.rmtree(entry)
+            pruned += 1
+        except OSError:
+            pass
+    return pruned
+
+
 def get(store, raw, events, tasks, chunk_chars=24000):
     from task_queue import safe
     require(type(chunk_chars) is int and chunk_chars > 0, '分片字符上限必须为正整数。', 'input')
     token, meta, sources = snapshot(store, raw, events, tasks)
     source_token = token
     token = f'{token}-{chunk_chars}'
-    home = f'.shell/local/state/{token}'
+    home = f'{STATE_CACHE}/{token}'
     doc = {'context': token, 'metadata': meta, 'files': []}
-    for i, (name, data) in enumerate(sorted(sources.items())):
+    for i, (name, data) in enumerate(sorted(sources.items(), key=order)):
         value = data.decode('utf-8')
         pieces = [value[n:n+chunk_chars] for n in range(0, len(value), chunk_chars)] or ['']
         parts = []
@@ -99,8 +137,9 @@ def get(store, raw, events, tasks, chunk_chars=24000):
     store.atomic_write(safe(store.root, manifest), (json.dumps(doc, ensure_ascii=False, indent=2)+'\n').encode())
     require(snapshot(store, raw, events, tasks)[0] == source_token, '送达前来源已变，重新获取。', 'conflict')
     cached(store, token, meta, sources)
+    pruned = prune(store, source_token)
     return {'ok': True, 'context': token, 'seq': len(events), 'base': str(store.repo),
-            'manifest': store.gpath(manifest), 'files': doc['files'],
+            'manifest': store.gpath(manifest), 'files': doc['files'], 'pruned': pruned,
             'note': '正文仅为 truth 白名单与窗口任务包原文；按顺序读完各源的所有分片。版本校验不证明模型已经理解。'}
 
 

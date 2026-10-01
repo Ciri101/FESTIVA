@@ -4,31 +4,20 @@ FESTIVA 是面向国际学生的 iOS 节日聚会项目，目标是帮助用户�
 
 ## 从哪里看起
 
-- [项目目标](truth/goals.md)：当前目标、范围和待决定问题。
-- [高保真设计文档（草稿）](truth/FESTIVA-高保真设计文档-草稿.md)：10 张界面图所呈现的页面、路径与设计问题。
-- [工程架构文档（草稿）](truth/FESTIVA-工程架构文档-草稿.md)：C4 图中的系统、容器、数据流与工程待确认事项。
-- [参考图](reference/)：C4 图与 `high-fi/` 高保真图片。
+先读[项目目标](truth/goals.md)：当前目标、范围与待决定的问题，以及“文档结构”一节列出的产品、设计与工程文档。原始参考图（C4 原图与 `high-fi/` 高保真图片）在 [reference/](reference/)。
 
-两份文档都标为草稿。用户确认前，其中的建议和待确认事项不是已批准的产品或技术决定。
+各文档在头部和每节开头标注状态：标为“已确认”的章节经过逐节确认；标为“草稿”的章节和列出的待确认事项，在用户确认前都不是已批准的产品或技术决定。
 
 ## 文件夹用途
 
-| 位置 | 用途 |
-| --- | --- |
-| `truth/` | 长期目标，以及带明确状态的产品、设计和工程文档 |
-| `reference/` | 有来源的 C4 图、高保真图片和其他参考资料 |
-| `object/` | 后续源码或正式工作产物的默认位置 |
-| `queue/`、`.shell/queue/` | 由工具维护的任务视图与机器账 |
-| `charter/`、`AGENTS.md` | 协作规则与公共入口 |
-| `gate/`、`eval/` | 检查方法与效果评价方法 |
-| `tool/` | 本地任务队列工具及说明 |
+各文件夹管什么、规则写在哪里，见[根契约](AGENTS.md)第 2 节的地图。根契约是所有 Agent 的入口，全局协作规则也写在那里。
 
 ## 项目如何协作
 
-用户直接描述要做的事，Agent 负责整理方案、执行和记录。任务队列是本地项目管理工具，不是 FESTIVA App 的运行部分。队列使用 Python 3.10+ 和 Git；此机器的系统 `python3` 是 3.9。当前可用的 Python 3.12 位于 `/Users/shixinyue/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3`。例如在项目根目录运行：
+用户直接描述要做的事，Agent 负责整理方案、执行和记录。任务队列是本地项目管理工具，不是 FESTIVA App 的运行部分。队列需要 Python 3.10+ 和 Git；系统 `python3` 低于 3.10 时，用任意 3.10+ 的解释器运行。例如在项目根目录运行：
 
 ```sh
-/Users/shixinyue/.cache/codex-runtimes/codex-primary-runtime/dependencies/python/bin/python3 tool/shell.py doctor
+python3 tool/shell.py doctor
 ```
 
 详细命令见[队列用法](tool/queue-usage.md)。
