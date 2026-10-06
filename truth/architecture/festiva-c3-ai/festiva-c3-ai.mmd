@@ -1,0 +1,42 @@
+%% name: festiva-c3-ai
+%% home: festiva-c3-ai
+flowchart TB
+  app["iOS App<br/>[Container]"]
+  subgraph ai["AI 编排服务"]
+    subgraph drive["接入"]
+      chatApi["对话接口适配器<br/>接收对话请求，流式返回<br/>[chat API adapter · HTTPS 流式]"]
+    end
+    subgraph core["业务核心"]
+      usecase["对话用例<br/>编排一轮对话与工具调用<br/>不做业务判断<br/>[chat use case]"]
+      roles["角色目录<br/>三个角色的提示词<br/>与各自唯一的工具<br/>[role catalog]"]
+      context["共享上下文<br/>可以发给模型的用户数据<br/>没有同意即拒绝<br/>[shared context]"]
+      search["活动搜索<br/>Patti：需求转成查询条件<br/>生成推荐卡<br/>[party search]"]
+      draft["活动草稿<br/>Conor：校验活动字段<br/>生成草稿卡<br/>[party draft]"]
+      summary["资料摘要<br/>Lily：校验资料项<br/>生成摘要卡<br/>[profile summary]"]
+    end
+    subgraph driven["适配器"]
+      llmA["大模型适配器<br/>实现模型口，保管密钥<br/>[LLM adapter · Qwen API]"]
+      readC["只读接口客户端<br/>带用户令牌查询 API 服务<br/>[read-only API client · HTTPS]"]
+    end
+  end
+  api["API 服务<br/>[Container]"]
+  llm["云端大模型服务<br/>[External System]"]
+  app -->|"角色对话"| chatApi
+  chatApi -->|"调用用例"| usecase
+  usecase -->|"取角色"| roles
+  usecase -->|"定上下文"| context
+  usecase -->|"搜索规则"| search
+  usecase -->|"草稿规则"| draft
+  usecase -->|"摘要规则"| summary
+  usecase -->|"调用模型"| llmA
+  usecase -.->|"只读查询"| readC
+  readC -.->|"只读查询"| api
+  llmA -->|"调用模型"| llm
+  classDef shell fill:#deebf7,stroke:#5b81a8
+  classDef ext fill:#f2f2f2,stroke:#8a8a8a
+  class chatApi,usecase,roles,context,search,draft,summary,llmA,readC shell
+  class app,api,llm ext
+  style ai fill:none,stroke:#4a90e2,stroke-dasharray:6 4
+  style drive fill:none,stroke:#5b81a8,stroke-dasharray:2 2
+  style core fill:none,stroke:#5b81a8,stroke-dasharray:2 2
+  style driven fill:none,stroke:#5b81a8,stroke-dasharray:2 2

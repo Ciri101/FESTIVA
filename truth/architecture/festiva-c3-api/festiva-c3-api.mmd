@@ -1,0 +1,55 @@
+%% name: festiva-c3-api
+%% home: festiva-c3-api
+flowchart TB
+  app["iOS App<br/>[Container]"]
+  ai["AI 编排服务<br/>[Container]"]
+  subgraph api["API 服务"]
+    subgraph drive["接入"]
+      http["HTTP 接口适配器<br/>鉴权，把请求转成用例<br/>[HTTP API adapter · HTTP/JSON]"]
+    end
+    subgraph core["业务核心"]
+      usecase["业务用例<br/>编排一次操作与事务<br/>不做业务判断<br/>[business use cases]"]
+      party["活动目录<br/>活动的发布、修改与状态<br/>按查看者过滤字段<br/>[party catalog]"]
+      ledger["申请账本<br/>申请状态、名额与资格<br/>[membership ledger]"]
+      profile["用户档案<br/>资料、学校认证<br/>与可见范围<br/>[user profile]"]
+      ranking["推荐排序<br/>硬条件过滤、软偏好<br/>与理由标签<br/>[recommendation ranking]"]
+      inbox["通知箱<br/>决定通知谁<br/>记录站内通知<br/>[notification inbox]"]
+    end
+    subgraph driven["适配器"]
+      session["会话签发器<br/>验证码与会话令牌<br/>[session issuer]"]
+      repo["数据库适配器<br/>实现业务侧的存取口<br/>[database adapter · PostgreSQL]"]
+      signer["图片上传签名器<br/>签发图片上传地址<br/>[image upload signer · S3 兼容]"]
+      mailer["邮件适配器<br/>发送验证码邮件<br/>[email adapter]"]
+      pusher["推送通知适配器<br/>发送推送<br/>[push notification adapter · APNs]"]
+    end
+  end
+  db["数据库<br/>[Container]"]
+  files["文件存储<br/>[Container]"]
+  mail["邮件发送服务<br/>[External System]"]
+  apns["Apple 推送通知服务<br/>[External System]"]
+  app -->|"业务请求"| http
+  ai -.->|"只读查询"| http
+  http -->|"校验令牌"| session
+  http -->|"调用用例"| usecase
+  usecase -->|"活动规则"| party
+  usecase -->|"申请规则"| ledger
+  usecase -->|"资料规则"| profile
+  usecase -->|"排序"| ranking
+  usecase -->|"定接收人"| inbox
+  usecase -->|"存取数据"| repo
+  usecase -->|"签发会话"| session
+  usecase -->|"签发地址"| signer
+  usecase -->|"发验证码"| mailer
+  usecase -->|"发推送"| pusher
+  repo -->|"读写"| db
+  signer -->|"签发与校验"| files
+  mailer -->|"发验证码"| mail
+  pusher -->|"发送推送"| apns
+  classDef shell fill:#deebf7,stroke:#5b81a8
+  classDef ext fill:#f2f2f2,stroke:#8a8a8a
+  class http,usecase,party,ledger,profile,ranking,inbox,session,repo,signer,mailer,pusher shell
+  class app,ai,db,files,mail,apns ext
+  style api fill:none,stroke:#4a90e2,stroke-dasharray:6 4
+  style drive fill:none,stroke:#5b81a8,stroke-dasharray:2 2
+  style core fill:none,stroke:#5b81a8,stroke-dasharray:2 2
+  style driven fill:none,stroke:#5b81a8,stroke-dasharray:2 2

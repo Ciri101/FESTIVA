@@ -21,7 +21,7 @@ import uuid
 from datetime import datetime, timezone
 
 from queue_model import (QueueError, require, text, sha, line, parse_proposal, decode, encode,
-                         replay, TERMINAL, task_id, relative_path, PROJECTION_VERSION)
+                         replay, TERMINAL, task_id, task_number, next_task_id, relative_path, PROJECTION_VERSION)
 from queue_v2 import projections, blockers, CONFIG, ARCHIVE, WINDOW, home, config_bytes, config, occupied
 import state_pack
 
@@ -87,7 +87,7 @@ class Store:
     def response_files(self, tasks, selected=None, stage_paths=None):
         """Explicit coordinates, always relative to the Git root, never guessed names."""
         rows = []
-        for ident in sorted(tasks if selected is None else selected, key=lambda key: int(key[1:])):
+        for ident in sorted(tasks if selected is None else selected, key=task_number):
             item = tasks[ident]
             task_home = home(item)
             baseline = item['approvals'][-1] if item['approvals'] else None
@@ -651,7 +651,7 @@ def execute(args):
         require(tasks.protocol == 2, '旧账只读；先 upgrade --preview 并明确升级。', 'upgrade_required')
         state_pack.check(store, raw, events, tasks, args.context)
         if op == 'create':
-            data['id'] = f"T{max([int(k[1:]) for k in tasks] or [0]) + 1:04d}"
+            data['id'] = next_task_id(tasks)
         if op == 'revise':
             require(args.id in tasks, '任务不存在。', 'identity')
             if data['parent'] == {'keep': True}:

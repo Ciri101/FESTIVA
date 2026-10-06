@@ -59,7 +59,7 @@ class StateQueue(unittest.TestCase):
         shown={p.split('/')[2] for p in self.sources(self.get()) if p.startswith('queue/tasks/')}
         self.assertEqual(shown,set(ids))
         self.r.write('claim',ids[0]); self.r.deliver(ids[0]); self.assertEqual(self.r.create(expected=1)['code'],'capacity')
-        self.r.write('close',ids[0],*AUTH); self.assertEqual(self.r.create()['task'],'T0009')
+        self.r.write('close',ids[0],*AUTH); self.assertEqual(self.r.create()['task'],'T9')
 
     def test_03_two_approvals_compete_for_last_slot(self):
         for _ in range(7): self.r.create()
@@ -91,7 +91,7 @@ class StateQueue(unittest.TestCase):
         self.assertNotIn('status',hist); self.assertTrue(hist['removed'])
         self.assertEqual(self.r.write('claim',t,expected=1)['code'],'not_ready')
         self.assertTrue((self.r.root/f'.shell/queue/archive/{dep}/task.md').is_file())
-        self.assertEqual(self.r.create()['task'],'T0003')
+        self.assertEqual(self.r.create()['task'],'T3')
         self.assertEqual(self.r.commit().returncode,0)
 
     def test_06_payload_is_exact_whitelisted_truth_plus_all_window_files(self):
@@ -224,5 +224,36 @@ class StateQueue(unittest.TestCase):
     def test_24_template_cli_help_lists_tree(self):
         p=run([sys.executable,'-B',str(self.r.root/'tool/shell.py'),'--help'],self.r.repo)
         self.assertIn('task register',p.stdout); self.assertIn('state get',p.stdout)
+
+    def stale_versions(self):
+        # Every fixture write fetches a pack first, so each create leaves one version behind.
+        for _ in range(4): self.r.create()
+        base=self.r.root/'.shell/local/state'
+        dirs=sorted((d for d in base.iterdir() if not d.is_symlink() and d.name!='notes'),key=lambda d:d.name)
+        for i,d in enumerate(dirs): os.utime(d/'manifest.json',(1000+i,1000+i))
+        return base,dirs
+
+    def test_25_get_keeps_current_sizes_and_two_newest_stale_versions(self):
+        base,dirs=self.stale_versions()
+        self.assertEqual(len(dirs),3)  # pruning during the creates already bounded growth
+        pack=self.get();small=self.get(size=7)
+        self.assertEqual(pack['pruned'],1);self.assertEqual(small['pruned'],0)
+        self.assertEqual({d.name for d in base.iterdir()},{dirs[1].name,dirs[2].name,pack['context'],small['context']})
+        for p in (pack,small): self.r.call('state','check','--context',p['context'])
+
+    @unittest.skipIf(os.name=='nt' or os.geteuid()==0,'needs POSIX permissions as a normal user')
+    def test_26_pruning_skips_foreign_entries_and_never_blocks_delivery(self):
+        base=self.r.root/'.shell/local/state';self.get()
+        outside=Path(self.tmp.name)/'outside';outside.mkdir();(outside/'keep.txt').write_text('x')
+        link=base/('f'*64+'-24000');link.symlink_to(outside,target_is_directory=True)
+        notes=base/'notes';notes.mkdir();(notes/'n.txt').write_text('mine')
+        for p in (outside,notes): os.utime(p,(1,1))  # oldest: would be pruned first if not skipped
+        base,dirs=self.stale_versions()
+        stuck=dirs[0]/'content';stuck.chmod(0o500);self.addCleanup(stuck.chmod,0o700)
+        pack=self.get()
+        self.assertEqual(pack['pruned'],0);self.assertTrue(stuck.exists())
+        self.assertTrue(link.is_symlink());self.assertTrue((outside/'keep.txt').exists())
+        self.assertTrue((notes/'n.txt').exists())
+        self.r.call('state','check','--context',pack['context'])
 
 if __name__ == '__main__': unittest.main()

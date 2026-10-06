@@ -3,12 +3,12 @@
 ```json
 {
   "id": "T0002",
-  "revision": 8,
-  "assignee": "codex",
+  "revision": 10,
+  "assignee": null,
   "parent": null,
   "deps": [],
   "round": 1,
-  "status": "交付"
+  "status": "通过"
 }
 ```
 
@@ -32,6 +32,7 @@
 - #6｜claim｜codex｜{"expect": 5, "id": "T0002"}
 - #7｜handoff｜codex｜{"expect": 6, "id": "T0002", "text": "GitHub Desktop 已管理本地目录并完成私有仓库推送，main 与 origin/main 均为 032ce2d，工作树干净。Desktop 将中文仓库名转换为 -----，当前 origin 为 https://github.com/Ciri101/-----.git。需要用户在 Chrome 登录 GitHub 后，于仓库 Settings 将名称改为 FESTIVA，再核对私有状态和远端；已向用户发起登录请求。暂不记录交付或验收通过。"}
 - #8｜deliver｜codex｜{"artifacts": [{"path": "README.md", "sha256": "7a6ce5be6e43c9b283b604f953abf059992c99dd47a1b1950f5c22ae57f3d56e"}, {"path": "reference/README.md", "sha256": "1ff2a60a8fac10d7819ae2584f1afea9e2f8fb79072f5e238e6e8b9e0de8945f"}, {"path": "truth/FESTIVA-高保真设计文档-草稿.md", "sha256": "561c270145a9d95af6776d1ed52758fef95bc6989a9b0fe9a7399000c504c3e0"}, {"path": "truth/FESTIVA-工程架构文档-草稿.md", "sha256": "f3f2e099b331dde68f1563123570633220eb1ae0d7034340981b9df0318ebcf1"}], "expect": 7, "id": "T0002", "receipt": "# FESTIVA GitHub 发布验证回执\n\n执行者：codex；日期：2026-09-28。以下为执行自检，不代替用户验收。\n\n- A1：GitHub Desktop 已加入本地目录 `/Users/shixinyue/Desktop/留学生派对`，当前仓库为本项目，主分支为 `main`。\n- A2：项目文档、参考图、队列规则与任务记录已提交；本机运行态 `.shell/local` 与 `.DS_Store` 由忽略规则排除。Git 工作树干净。\n- A3：GitHub 仓库已改名为 `Ciri101/FESTIVA`，网页显示 `Private`；线上 `main` 最新提交为 `a0a1ac5395bdaa2e6355fbdf1409abb036a89f81`，与本地 `HEAD` 和 `origin/main` 一致。本地 `origin` 已更新为 `https://github.com/Ciri101/FESTIVA.git`。\n- 说明：GitHub Desktop 首次发布时将中文目录名转换为 `-----`；随后在 GitHub 设置中改为 `FESTIVA`。本任务没有记录用户验收通过。\n", "summary": "已在 GitHub Desktop 管理本地项目并发布为私有 GitHub 仓库 Ciri101/FESTIVA，线上提交与本地一致", "verification": "passed"}
+- #10｜close｜claude｜{"authority": {"basis": "当前对话 2026-09-29：老师指令“T0001 和 T0002 现在通过”", "by": "用户（老师）"}, "expect": 8, "id": "T0002"}
 
 ## 接手说明
 
